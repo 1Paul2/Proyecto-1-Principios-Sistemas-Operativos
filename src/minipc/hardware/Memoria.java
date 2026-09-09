@@ -9,5 +9,25 @@ package minipc.hardware;
  * @author elenanito
  */
 public class Memoria {
-    
+        private String[] datos;
+        private int inicioUsuario;
+        private int tamanoTotal;
+        public Memoria(int tamanoTotal, int tamanoSistema){
+        
+        }
+        public void escribir(int posicion, String valorBinario){
+       
+        }
+
+        public String leer(int posicion){
+         
+        }
+
+        public boolean estaEnZonaUsuario(int posicion){
+
+        }
+
+        public int getInicioUsuario(){
+            return inicioUsuario;
+        }
 }
