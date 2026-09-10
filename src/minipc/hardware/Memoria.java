@@ -12,22 +12,32 @@ public class Memoria {
         private String[] datos;
         private int inicioUsuario;
         private int tamanoTotal;
-        public Memoria(int tamanoTotal, int tamanoSistema){
         
+        public Memoria(int tamanoTotal, int tamanoSistema){
+                this.tamanoTotal = tamanoTotal;
+                this.inicioUsuario = tamanoSistema;
+                this.datos = new String[tamanoTotal];
+                for(int x = 0; x < datos.length; x++){
+                    datos[x] = "00000000";
+            }
+                
         }
         public void escribir(int posicion, String valorBinario){
-       
+            datos[posicion] = valorBinario;
         }
 
         public String leer(int posicion){
-         
+            return datos[posicion];
         }
 
         public boolean estaEnZonaUsuario(int posicion){
-
+            return posicion >= inicioUsuario && posicion < tamanoTotal;
         }
 
         public int getInicioUsuario(){
             return inicioUsuario;
+        }
+        public static void main(String[] args){
+
         }
 }

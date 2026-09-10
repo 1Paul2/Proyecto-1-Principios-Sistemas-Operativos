@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/elenanito/Documents/Sistemas%20operativos/Tarea%231%20SO/README.md</file>
+            <file>file:/home/elenanito/Documents/Sistemas%20operativos/Tarea%231%20SO/src/minipc/util/ParserASM.java</file>
+            <file>file:/home/elenanito/Documents/Sistemas%20operativos/Tarea%231%20SO/src/minipc/util/ConversorBinario.java</file>
+            <file>file:/home/elenanito/Documents/Sistemas%20operativos/Tarea%231%20SO/src/minipc/modelo/TipoOPeracion.java</file>
+            <file>file:/home/elenanito/Documents/Sistemas%20operativos/Tarea%231%20SO/src/minipc/Main.java</file>
+            <file>file:/home/elenanito/Documents/Sistemas%20operativos/Tarea%231%20SO/src/minipc/modelo/Instruccion.java</file>
+            <file>file:/home/elenanito/Documents/Sistemas%20operativos/Tarea%231%20SO/src/minipc/hardware/Memoria.java</file>
+        </group>
+    </open-files>
 </project-private>

@@ -32,6 +32,24 @@ public class TipoOPeracion {
         }
         return Dato;
     }
+    
+        public static String BinarioATipo(String binario){
+        String Dato = "";
+        if(binario.equals("001")){
+            Dato = "LOAD";
+        }else if(binario.equals("010")){
+            Dato = "STORE";
+        }else if(binario.equals("011")){
+            Dato = "MOV";
+        }else if(binario.equals("100")){
+            Dato = "SUB";
+        }else if(binario.equals("101")){
+            Dato = "ADD";
+        }else{
+            Dato = null;
+        }
+        return Dato;
+    }
 
     
     public static void main(String[] arg){
