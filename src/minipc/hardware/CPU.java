@@ -5,6 +5,10 @@
 package minipc.hardware;
 import minipc.modelo.TipoOPeracion;
 import minipc.util.ConversorBinario;
+import minipc.modelo.Instruccion;
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  *
  * @author elenanito
@@ -18,6 +22,7 @@ public class CPU {
     private int CX;
     private int DX;
     private Memoria memoria;
+    private int limitePrograma;
     
     public CPU(Memoria memoria){
         this.memoria = memoria;
@@ -139,21 +144,55 @@ public class CPU {
         
     }
     
+    public void cargarPrograma(List<Instruccion> instrucciones){
+        int posicionActual = memoria.getInicioUsuario();
+        for(int x = 0; x < instrucciones.size(); x++){
+            Instruccion instr = instrucciones.get(x);
+            
+            memoria.escribir(posicionActual, instr.getcodigoBinarioOperacion());
+            posicionActual = posicionActual + 1;
+
+            
+            if(instr.getcodigoBinarioValor() != null){
+                memoria.escribir(posicionActual, instr.getcodigoBinarioValor());
+                posicionActual = posicionActual + 1;
+            }
+        }
+
+        this.limitePrograma = posicionActual;
+        this.PC = memoria.getInicioUsuario();
+     }
+    
+    public void pasoAPaso(){
+        fetch();
+        String[] decodificado = decode(IR);
+        execute(decodificado[0], decodificado[1]);
+    }
+    
+    public void ejecutarTodo(){
+        while(PC < limitePrograma){
+            pasoAPaso();
+        }
+    }
+
     public static void main(String[] args){
+        List<Instruccion> instrucciones = new ArrayList<>();
+        instrucciones.add(new Instruccion("MOV", "AX", 5));
+        instrucciones.add(new Instruccion("MOV", "BX", 3));
+        instrucciones.add(new Instruccion("LOAD", "AX", null));
+        instrucciones.add(new Instruccion("ADD", "BX", null));
+        instrucciones.add(new Instruccion("SUB", "AX", null));
+        instrucciones.add(new Instruccion("STORE", "AX", null));
+        instrucciones.add(new Instruccion("MOV", "BX", -8));
+
         Memoria memoria = new Memoria(128, 64);
-
-        // simulamos que YA se cargó "MOV AX, 5" en las posiciones 64 y 65
-        memoria.escribir(64, "011 0001");
-        memoria.escribir(65, "00000101");
-
         CPU cpu = new CPU(memoria);
-        cpu.setPC(64); // ojo: esto no existe todavía, ver nota abajo
 
-        cpu.fetch();
-        String[] decodificado = cpu.decode(cpu.getIR());
-        cpu.execute(decodificado[0], decodificado[1]);
+        cpu.cargarPrograma(instrucciones);
+        cpu.ejecutarTodo();
 
-        System.out.println(cpu.getAX());  // esperado: 5
-        System.out.println(cpu.getPC());  // esperado: 66
+        System.out.println("AC: " + cpu.getAC());  // esperado: 3
+        System.out.println("AX: " + cpu.getAX());  // esperado: 3
+        System.out.println("BX: " + cpu.getBX());  // esperado: -8
     }
 }
