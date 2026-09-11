@@ -191,8 +191,8 @@ public class CPU {
         cpu.cargarPrograma(instrucciones);
         cpu.ejecutarTodo();
 
-        System.out.println("AC: " + cpu.getAC());  // esperado: 3
-        System.out.println("AX: " + cpu.getAX());  // esperado: 3
-        System.out.println("BX: " + cpu.getBX());  // esperado: -8
+        System.out.println("AC: " + cpu.getAC());  
+        System.out.println("AX: " + cpu.getAX());  
+        System.out.println("BX: " + cpu.getBX());  
     }
 }
