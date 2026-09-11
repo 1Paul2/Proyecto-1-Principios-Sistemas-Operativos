@@ -18,15 +18,15 @@ public class TipoOPeracion {
         String Dato = "";
         
         if(Type.equals("LOAD")){
-            Dato = "001";
+            Dato = "0001";
         }else if(Type.equals("STORE")){
-            Dato = "010";
+            Dato = "0010";
         }else if(Type.equals("MOV")){
-            Dato = "011";
+            Dato = "0011";
         }else if(Type.equals("SUB")){
-            Dato = "100";
+            Dato = "0100";
         }else if(Type.equals("ADD")){
-            Dato = "101";
+            Dato = "0101";
         }else{
             Dato = null;
         }
@@ -35,15 +35,15 @@ public class TipoOPeracion {
     
         public static String BinarioATipo(String binario){
         String Dato = "";
-        if(binario.equals("001")){
+        if(binario.equals("0001")){
             Dato = "LOAD";
-        }else if(binario.equals("010")){
+        }else if(binario.equals("0010")){
             Dato = "STORE";
-        }else if(binario.equals("011")){
+        }else if(binario.equals("0011")){
             Dato = "MOV";
-        }else if(binario.equals("100")){
+        }else if(binario.equals("0100")){
             Dato = "SUB";
-        }else if(binario.equals("101")){
+        }else if(binario.equals("0101")){
             Dato = "ADD";
         }else{
             Dato = null;
