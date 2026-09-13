@@ -62,29 +62,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         lblValorCX = new javax.swing.JLabel();
         lblValorDX = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        lblTituloIdProceso = new javax.swing.JLabel();
-        lblValorIdProceso = new javax.swing.JLabel();
-        lblTituloEstado = new javax.swing.JLabel();
-        lblValorEstado = new javax.swing.JLabel();
-        lblTituloPCGuardado = new javax.swing.JLabel();
-        lblValorPCGuardado = new javax.swing.JLabel();
-        lblTituloACGuardado = new javax.swing.JLabel();
-        lblValorACGuardado = new javax.swing.JLabel();
-        lblTituloAXGuardado = new javax.swing.JLabel();
-        lblValorAXGuardado = new javax.swing.JLabel();
-        lblTituloBXGuardado = new javax.swing.JLabel();
-        lblValorBXGuardado = new javax.swing.JLabel();
-        lblTituloCXGuardado = new javax.swing.JLabel();
-        lblValorCXGuardado = new javax.swing.JLabel();
-        jLabel30 = new javax.swing.JLabel();
-        lblTituloDXGuardado = new javax.swing.JLabel();
-        lblValorDXGuardado = new javax.swing.JLabel();
         btnEstadisticas = new javax.swing.JButton();
         txtTamanoTotal = new javax.swing.JTextField();
         txtTamanoSistema = new javax.swing.JTextField();
         btnAsignarMemoria = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -152,46 +136,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         lblValorDX.setText("0");
 
-        jLabel15.setText("CPU");
-
-        lblTituloIdProceso.setText("ID Proceso:");
-
-        lblValorIdProceso.setText("-");
-
-        lblTituloEstado.setText("Estado:");
-
-        lblValorEstado.setText("-");
-
-        lblTituloPCGuardado.setText("PC guardado:");
-
-        lblValorPCGuardado.setText("-");
-
-        lblTituloACGuardado.setText("AC guardado:");
-
-        lblValorACGuardado.setText("-");
-
-        lblTituloAXGuardado.setText("AX guardado:");
-
-        lblValorAXGuardado.setText("-");
-
-        lblTituloBXGuardado.setText("BX guardado:");
-
-        lblValorBXGuardado.setText("-");
-
-        lblTituloCXGuardado.setText("CX guardado:");
-
-        lblValorCXGuardado.setText("-");
-
-        jLabel30.setText("BCP");
-
-        lblTituloDXGuardado.setText("DX guardado:");
-
-        lblValorDXGuardado.setText("-");
+        jLabel15.setText("BCP actual CPU");
 
         btnEstadisticas.setText("Estadisticas");
         btnEstadisticas.addActionListener(this::btnEstadisticasActionPerformed);
 
-        txtTamanoTotal.setText("128");
+        txtTamanoTotal.setText("256");
         txtTamanoTotal.addActionListener(this::txtTamanoTotalActionPerformed);
 
         txtTamanoSistema.setText("64");
@@ -204,57 +154,56 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jLabel2.setText("Tamaño total:");
 
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(this::btnSalirActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnSalir)
+                        .addGap(55, 55, 55)
                         .addComponent(btnCargar)
-                        .addGap(33, 33, 33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnPaso_Paso)
-                        .addGap(35, 35, 35)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEjecutar)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnLimpiar)
-                        .addGap(31, 31, 31)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEstadisticas)
-                        .addGap(45, 45, 45)
-                        .addComponent(btnAsignarMemoria, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addGap(30, 30, 30)
+                        .addComponent(btnAsignarMemoria, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(lblTituloIR)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(lblValorIR, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(lblTituloPC)
                                             .addGap(18, 18, 18)
                                             .addComponent(lblValorPC))
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(lblTituloBX)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(lblValorBX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(lblTituloAX)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(lblValorAX))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(lblTituloAC)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(lblValorAC)))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(lblTituloBX)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(lblValorBX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(lblTituloAX)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(lblValorAX))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(lblTituloAC)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(lblValorAC))
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(lblTituloDX)
                                             .addGap(18, 18, 18)
@@ -262,54 +211,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(lblTituloCX)
                                         .addGap(18, 18, 18)
-                                        .addComponent(lblValorCX)))
-                                .addGap(47, 47, 47)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lblValorCX))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloCXGuardado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblValorCXGuardado))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloBXGuardado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblValorBXGuardado))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloAXGuardado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblValorAXGuardado))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloACGuardado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblValorACGuardado))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloPCGuardado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblValorPCGuardado))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloEstado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblValorEstado))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloIdProceso)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblValorIdProceso))
-                                    .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTituloDXGuardado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(lblValorDXGuardado)))
-                                .addGap(62, 62, 62))
+                                        .addComponent(lblTituloIR)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(lblValorIR, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
+                                .addGap(44, 44, 44)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
-                                    .addComponent(jLabel2)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(txtTamanoTotal, javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(txtTamanoSistema, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                    .addComponent(jLabel2))
+                                .addGap(42, 42, 42)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtTamanoTotal, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtTamanoSistema, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addGap(14, 116, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,80 +237,62 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     .addComponent(btnPaso_Paso)
                     .addComponent(btnCargar)
                     .addComponent(btnEstadisticas)
-                    .addComponent(btnAsignarMemoria))
+                    .addComponent(btnAsignarMemoria)
+                    .addComponent(btnSalir))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(48, 48, 48)
+                        .addGap(36, 36, 36)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtTamanoSistema, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(12, 12, 12)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtTamanoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtTamanoSistema, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)
+                                .addComponent(txtTamanoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(33, 33, 33)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel30))
+                        .addComponent(jLabel15)
                         .addGap(13, 13, 13)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTituloPC)
-                            .addComponent(lblValorPC)
-                            .addComponent(lblTituloIdProceso)
-                            .addComponent(lblValorIdProceso))
+                            .addComponent(lblValorPC))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblTituloIR)
-                            .addComponent(lblTituloEstado)
-                            .addComponent(lblValorEstado)
-                            .addComponent(lblValorIR, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblValorIR, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTituloIR))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTituloAC)
-                            .addComponent(lblValorAC)
-                            .addComponent(lblTituloPCGuardado)
-                            .addComponent(lblValorPCGuardado))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(lblValorAC))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTituloAX)
-                            .addComponent(lblValorAX)
-                            .addComponent(lblTituloACGuardado)
-                            .addComponent(lblValorACGuardado))
+                            .addComponent(lblValorAX))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTituloBX)
-                            .addComponent(lblValorBX)
-                            .addComponent(lblTituloAXGuardado)
-                            .addComponent(lblValorAXGuardado))
+                            .addComponent(lblValorBX))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTituloCX)
-                            .addComponent(lblValorCX)
-                            .addComponent(lblTituloBXGuardado)
-                            .addComponent(lblValorBXGuardado))
+                            .addComponent(lblValorCX))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTituloDX)
-                            .addComponent(lblValorDX)
-                            .addComponent(lblTituloCXGuardado)
-                            .addComponent(lblValorCXGuardado))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblTituloDXGuardado)
-                            .addComponent(lblValorDXGuardado))))
-                .addGap(87, 87, 87))
+                            .addComponent(lblValorDX))))
+                .addGap(67, 67, 67))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void actualizarVista(){
-        // Labels de CPU
         lblValorPC.setText("" + cpu.getPC());
         lblValorIR.setText(cpu.getIR());
         lblValorAC.setText("" + cpu.getAC());
@@ -403,15 +301,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         lblValorCX.setText("" + cpu.getCX());
         lblValorDX.setText("" + cpu.getDX());
 
-        // Labels de BCP
-        lblValorIdProceso.setText("" + bcp.getIdProceso());
-        lblValorEstado.setText(bcp.getEstado());
-        lblValorPCGuardado.setText("" + bcp.getPcGuardado());
-        lblValorACGuardado.setText("" + bcp.getAcGuardado());
-        lblValorAXGuardado.setText("" + bcp.getAxGuardado());
-        lblValorBXGuardado.setText("" + bcp.getBxGuardado());
-        lblValorCXGuardado.setText("" + bcp.getCxGuardado());
-        lblValorDXGuardado.setText("" + bcp.getDxGuardado());
         actualizarTablaInstrucciones();
         actualizarTablaMemoria();
     }
@@ -493,6 +382,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             return;
         }
 
+        if(!cpu.programaTerminado()){
+            int confirmacion = JOptionPane.showConfirmDialog(this, "El programa todavía no terminó de ejecutarse.\n ¿Querés limpiarlo de todas formas?", "Confirmar limpieza", JOptionPane.YES_NO_OPTION);
+            if(confirmacion != JOptionPane.YES_OPTION){
+                return;
+            }
+        }
+
         cpu = null;
         memoria = null;
         bcp = null;
@@ -506,15 +402,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         lblValorCX.setText("0");
         lblValorDX.setText("0");
 
-        lblValorIdProceso.setText("-");
-        lblValorEstado.setText("-");
-        lblValorPCGuardado.setText("-");
-        lblValorACGuardado.setText("-");
-        lblValorAXGuardado.setText("-");
-        lblValorBXGuardado.setText("-");
-        lblValorCXGuardado.setText("-");
-        lblValorDXGuardado.setText("-");
-
         DefaultTableModel modeloVacioInstrucciones = new DefaultTableModel(new Object[0][2], new String[]{"Instrucción", "Binario"});
         tablaInstrucciones.setModel(modeloVacioInstrucciones);
 
@@ -523,7 +410,53 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnEstadisticasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstadisticasActionPerformed
-        // TODO add your handling code here:
+        if(cpu == null){
+            JOptionPane.showMessageDialog(this, "Primero cargá un archivo", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int instruccionesEjecutadas = cpu.getPC() - memoria.getInicioUsuario();
+
+        int contadorLoad = 0;
+        int contadorStore = 0;
+        int contadorMov = 0;
+        int contadorAdd = 0;
+        int contadorSub = 0;
+
+        for(int i = 0; i < instruccionesEjecutadas; i++){
+            String operacion = instruccionesActuales.get(i).getoperacion();
+
+            if(operacion.equals("LOAD")){
+                contadorLoad = contadorLoad + 1;
+            }else if(operacion.equals("STORE")){
+                contadorStore = contadorStore + 1;
+            }else if(operacion.equals("MOV")){
+                contadorMov = contadorMov + 1;
+            }else if(operacion.equals("ADD")){
+                contadorAdd = contadorAdd + 1;
+            }else if(operacion.equals("SUB")){
+                contadorSub = contadorSub + 1;
+            }
+        }
+
+        String mensaje = "=== PROGRESO DE EJECUCIÓN ===\n";
+        mensaje = mensaje + "Instrucciones ejecutadas: " + instruccionesEjecutadas + " de " + instruccionesActuales.size() + "\n";
+        mensaje = mensaje + "PC actual: " + cpu.getPC() + "\n";
+        mensaje = mensaje + "\n";
+        mensaje = mensaje + "=== OPERACIONES UTILIZADAS ===\n";
+
+        if(instruccionesEjecutadas == 0){
+            mensaje = mensaje + "(todavía no se ejecutó ninguna instrucción)";
+        } else {
+            if(contadorLoad > 0){ mensaje = mensaje + "LOAD (0001): " + contadorLoad + "\n"; }
+            if(contadorStore > 0){ mensaje = mensaje + "STORE (0010): " + contadorStore + "\n"; }
+            if(contadorMov > 0){ mensaje = mensaje + "MOV (0011): " + contadorMov + "\n"; }
+            if(contadorSub > 0){ mensaje = mensaje + "SUB (00100): " + contadorSub + "\n"; }
+            if(contadorAdd > 0){ mensaje = mensaje + "ADD (0101): " + contadorAdd + "\n"; }
+        }
+
+        JOptionPane.showMessageDialog(this, mensaje, "Estadísticas de ejecución", JOptionPane.INFORMATION_MESSAGE);
+
     }//GEN-LAST:event_btnEstadisticasActionPerformed
 
     private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
@@ -542,7 +475,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             try {
                 instruccionesActuales = ParserASM.leerArchivo(archivoSeleccionado);
 
-                memoria = new Memoria(128, 64);
+                if(memoria == null){
+                    memoria = new Memoria(256, 64);
+                }
                 cpu = new CPU(memoria);
                 cpu.cargarPrograma(instruccionesActuales);
 
@@ -595,10 +530,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             return;
         }
 
+        cpu = null;
+        memoria = null;
+        bcp = null;
+        instruccionesActuales = null;
+
+        lblValorPC.setText("0");
+        lblValorIR.setText("");
+        lblValorAC.setText("0");
+        lblValorAX.setText("0");
+        lblValorBX.setText("0");
+        lblValorCX.setText("0");
+        lblValorDX.setText("0");
+
+        DefaultTableModel modeloVacioInstrucciones = new DefaultTableModel(new Object[0][2], new String[]{"Instrucción", "Binario"});
+        tablaInstrucciones.setModel(modeloVacioInstrucciones);
+
+        DefaultTableModel modeloVacioMemoria = new DefaultTableModel(new Object[0][2], new String[]{"Posición", "Valor en memoria"});
+        tablaMemoria.setModel(modeloVacioMemoria);
+        
         memoria = new Memoria(tamanoTotal, tamanoSistema);
         cpu = new CPU(memoria);
         instruccionesActuales = null;
         bcp = null;
+        
+                
+
+
 
         JOptionPane.showMessageDialog(this, "Memoria asignada: " + tamanoTotal + " posiciones, " + tamanoSistema + " para el S.O.", "Memoria asignada", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnAsignarMemoriaActionPerformed
@@ -621,6 +579,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     cpu.ejecutarTodo();
     actualizarVista();
     }//GEN-LAST:event_btnEjecutarActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Seguro que querés salir?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
+        if(confirmacion == JOptionPane.YES_OPTION){
+            System.exit(0);
+        }
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -654,42 +619,26 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnEstadisticas;
     private javax.swing.JButton btnLimpiar;
     private javax.swing.JButton btnPaso_Paso;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel30;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblTituloAC;
-    private javax.swing.JLabel lblTituloACGuardado;
     private javax.swing.JLabel lblTituloAX;
-    private javax.swing.JLabel lblTituloAXGuardado;
     private javax.swing.JLabel lblTituloBX;
-    private javax.swing.JLabel lblTituloBXGuardado;
     private javax.swing.JLabel lblTituloCX;
-    private javax.swing.JLabel lblTituloCXGuardado;
     private javax.swing.JLabel lblTituloDX;
-    private javax.swing.JLabel lblTituloDXGuardado;
-    private javax.swing.JLabel lblTituloEstado;
     private javax.swing.JLabel lblTituloIR;
-    private javax.swing.JLabel lblTituloIdProceso;
     private javax.swing.JLabel lblTituloPC;
-    private javax.swing.JLabel lblTituloPCGuardado;
     private javax.swing.JLabel lblValorAC;
-    private javax.swing.JLabel lblValorACGuardado;
     private javax.swing.JLabel lblValorAX;
-    private javax.swing.JLabel lblValorAXGuardado;
     private javax.swing.JLabel lblValorBX;
-    private javax.swing.JLabel lblValorBXGuardado;
     private javax.swing.JLabel lblValorCX;
-    private javax.swing.JLabel lblValorCXGuardado;
     private javax.swing.JLabel lblValorDX;
-    private javax.swing.JLabel lblValorDXGuardado;
-    private javax.swing.JLabel lblValorEstado;
     private javax.swing.JLabel lblValorIR;
-    private javax.swing.JLabel lblValorIdProceso;
     private javax.swing.JLabel lblValorPC;
-    private javax.swing.JLabel lblValorPCGuardado;
     private javax.swing.JTable tablaInstrucciones;
     private javax.swing.JTable tablaMemoria;
     private javax.swing.JTextField txtTamanoSistema;
