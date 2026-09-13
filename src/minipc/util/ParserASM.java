@@ -36,6 +36,10 @@ public class ParserASM {
             Integer valor = null;
             if(partes.length == 3){
                 valor = Integer.parseInt(partes[2]);
+                    if(valor < -127 || valor > 127){
+                        throw new RuntimeException("El valor " + valor + " no cabe en 8 bits.\nDebe de ser entre -127 a 127 contando negativos.");
+                        
+                    }
             }
 
             return new Instruccion(operacion, registro, valor);
@@ -75,22 +79,6 @@ public class ParserASM {
         }
         
         public static void main(String[] args){
-            File archivo = new File("src/minipc/util/program.asm");
 
-            try {
-                List<Instruccion> instrucciones = leerArchivo(archivo);
-
-                System.out.println("Archivo leído correctamente. Instrucciones encontradas: " + instrucciones.size());
-
-                for(int i = 0; i < instrucciones.size(); i++){
-                    Instruccion instr = instrucciones.get(i);
-                    System.out.println((i+1) + ". " + instr.getoperacion() + " " + instr.getregistro() + " " + instr.getvalor());
-                }
-
-            } catch (RuntimeException e) {
-                System.out.println("Error de formato: " + e.getMessage());
-            } catch (IOException e) {
-                System.out.println("Error al leer el archivo: " + e.getMessage());
-            }
         }
 }

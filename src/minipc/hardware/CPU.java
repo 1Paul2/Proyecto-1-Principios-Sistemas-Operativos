@@ -128,25 +128,6 @@ public class CPU {
         }
     
     public static void main(String[] args){
-        List<Instruccion> instrucciones = new java.util.ArrayList<>();
-        instrucciones.add(new Instruccion("MOV", "AX", 5));
-        instrucciones.add(new Instruccion("MOV", "BX", 3));
-        instrucciones.add(new Instruccion("LOAD", "AX", null));
-        instrucciones.add(new Instruccion("ADD", "BX", null));
-        instrucciones.add(new Instruccion("SUB", "AX", null));
-        instrucciones.add(new Instruccion("STORE", "AX", null));
-        instrucciones.add(new Instruccion("MOV", "BX", -8));
-        
-        Memoria memoria = new Memoria(128, 64);
-        CPU cpu = new CPU(memoria);
-        
-        cpu.cargarPrograma(instrucciones);
-        System.out.println("Instrucciones ocupan posiciones 64 a " + (cpu.limitePrograma - 1) + " (7 instrucciones, 7 posiciones)");
-        
-        cpu.ejecutarTodo();
-        
-        System.out.println("AC: " + cpu.getAC());  // esperado: 3
-        System.out.println("AX: " + cpu.getAX());  // esperado: 3
-        System.out.println("BX: " + cpu.getBX());  // esperado: -8
+ 
     }
 }

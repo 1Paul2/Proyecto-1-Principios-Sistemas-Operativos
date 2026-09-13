@@ -42,7 +42,7 @@ public class Instruccion {
         return codigoBinarioValor;
     }
     
-    // NUEVO: junta todo en un solo String -> esto es lo que se guarda en 1 sola posición de memoria
+ 
     public String getCodigoBinarioCompleto(){
         if(codigoBinarioValor != null){
             return codigoBinarioOperacion + " " + codigoBinarioValor;
