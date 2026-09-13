@@ -6,14 +6,21 @@ package minipc.modelo;
 
 /**
  *
- * @author elenanito
+ * @author Poll Anthony Garro Vargas - 2024129001
+ * @Universidad: Instituto Tecnológico de Costa Rica
+ * 
  */
 
-
-
-    
+/**
+ * TipoOPeracion: convierte entre el texto de una operación del lenguaje
+ * ensamblador (LOAD, STORE, MOV, SUB, ADD) y su código binario de 4 bits,
+ * y viceversa.
+ */
 public class TipoOPeracion {
     
+    // E: Type (String) - nombre de la operación, ej. "LOAD", "MOV"
+    // S: String - código binario de 4 bits de la operación, o null si no es válida
+    // R: Type debe ser exactamente una de las 5 operaciones existentes
     public static String Tipo(String Type){
         String Dato = "";
         
@@ -33,7 +40,10 @@ public class TipoOPeracion {
         return Dato;
     }
     
-        public static String BinarioATipo(String binario){
+    // E: binario (String) - código binario de 4 bits de una operación
+    // S: String - nombre de la operación, o null si el código no es válido
+    // R: binario debe ser uno de los 5 códigos válidos definidos
+    public static String BinarioATipo(String binario){
         String Dato = "";
         if(binario.equals("0001")){
             Dato = "LOAD";

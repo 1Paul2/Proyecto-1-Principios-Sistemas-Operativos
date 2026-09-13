@@ -3,6 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package minipc.gui;
+
+/**
+ *
+ * @author Poll Anthony Garro Vargas - 2024129001
+ * @Universidad: Instituto Tecnológico de Costa Rica
+ * 
+ */
+
 import minipc.hardware.CPU;
 import minipc.hardware.Memoria;
 import minipc.modelo.BCP;
@@ -16,9 +24,12 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
- * @author elenanito
+ * VentanaPrincipal: interfaz grafica del simulador Mini PC. Conecta los
+ * botones (Cargar, Paso a paso, Ejecutar, Limpiar, Estadisticas, Asignar
+ * memoria, Salir) con la logica de CPU, Memoria, BCP y ParserASM, y refresca
+ * las tablas y labels con el estado actual del sistema.
  */
+
 public class VentanaPrincipal extends javax.swing.JFrame {
     private CPU cpu;
     private Memoria memoria;
@@ -312,7 +323,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    // E: no aplica
+    // S: no aplica (void)
+    // R: refresca los labels de CPU y las tablas de Instrucciones y Memoria con el estado actual
     private void actualizarVista(){
         lblValorPC.setText("" + cpu.getPC());
         lblValorIR.setText(cpu.getIR());
@@ -326,6 +339,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         actualizarTablaMemoria();
     }
     
+    // E: no aplica
+    // S: no aplica (void)
+    // R: reconstruye el modelo de la tabla de instrucciones a partir de instruccionesActuales
+
     private void actualizarTablaInstrucciones(){
         String[] columnas = {"Instrucción", "Binario"};
         Object[][] datos = new Object[instruccionesActuales.size()][2];
@@ -353,6 +370,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         tablaInstrucciones.setModel(modelo);
     }
     
+    // E: no aplica
+    // S: no aplica (void)
+    // R: reconstruye el modelo de la tabla de memoria mostrando todas las posiciones, con el texto de la instrucción en la posición donde arranca cada una
+
     private void actualizarTablaMemoria(){
         String[] columnas = {"Posición", "Valor en memoria"};
         String[] todaLaMemoria = memoria.getTodasLasPosiciones();
@@ -383,6 +404,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         DefaultTableModel modelo = new DefaultTableModel(datos, columnas);
         tablaMemoria.setModel(modelo);
     }
+    
+    // E: evt (ActionEvent) - clic del boton "Paso a paso"
+    // S: no aplica (void)
+    // R: ejecuta un solo ciclo fetch-decode-execute si hay un programa cargado y no ha terminado
     private void btnPaso_PasoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaso_PasoActionPerformed
         if(cpu == null){
                 JOptionPane.showMessageDialog(this, "Primero cargá un archivo", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -399,6 +424,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnPaso_PasoActionPerformed
 
+    // E: evt (ActionEvent) - clic del boton "Limpiar"
+    // S: no aplica (void)
+    // R: pide confirmación si el programa aún no terminó; luego resetea CPU, memoria, BCP, instrucciones, labels y tablas a su estado inicial
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         if(cpu == null){
             JOptionPane.showMessageDialog(this, "No hay nada cargado para limpiar", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -432,6 +460,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         tablaMemoria.setModel(modeloVacioMemoria);
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
+    // E: evt (ActionEvent) - clic del boton "Estadisticas"
+    // S: no aplica (void)
+    // R: muestra en un JOptionPane el progreso de ejecucion y el desglose de operaciones ya ejecutadas hasta el PC actual
     private void btnEstadisticasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstadisticasActionPerformed
         if(cpu == null || instruccionesActuales == null){
             JOptionPane.showMessageDialog(this, "Primero cargá un archivo", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -482,6 +513,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnEstadisticasActionPerformed
 
+    // E: evt (ActionEvent) - clic del boton "Cargar archivo"
+    // S: no aplica (void)
+    // R: pide confirmar memoria por defecto si no hay una asignada; abre un 
+    // JFileChooser, valida extension .asm, parsea el archivo, carga el programa en memoria y actualiza la vista; muestra error si algo falla
     private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
 
         if(memoria == null){
@@ -531,6 +566,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTamanoTotalActionPerformed
 
+    // E: evt (ActionEvent) - clic del boton "Asignar memoria"
+    // S: no aplica (void)
+    // R: bloquea el cambio si hay un programa en ejecucion; valida que los
+    //tamaños sean numeros validos, total >= 256 y sistema >= 64; si todo es valido, resetea el estado y crea una Memoria/CPU nuevas
     private void btnAsignarMemoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsignarMemoriaActionPerformed
         if(cpu != null && !cpu.programaTerminado()){
             JOptionPane.showMessageDialog(this, "No se puede asignar memoria mientras un programa está en ejecución. Terminá la ejecución o dale a Limpiar primero.", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -596,6 +635,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTamanoSistemaActionPerformed
 
+    // E: evt (ActionEvent) - clic del boton "Ejecutar"
+    // S: no aplica (void)
+    // R: ejecuta todo el programa cargado de una vez si no ha terminado ya
     private void btnEjecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEjecutarActionPerformed
     if(cpu == null){
         JOptionPane.showMessageDialog(this, "Primero cargá un archivo", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -611,6 +653,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     actualizarVista();
     }//GEN-LAST:event_btnEjecutarActionPerformed
 
+    // E: evt (ActionEvent) - clic del boton "Salir"
+    // S: no aplica (void)
+    // R: pide confirmacion antes de cerrar completamente la aplicacion
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         int confirmacion = JOptionPane.showConfirmDialog(this, "¿Seguro que querés salir?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
         if(confirmacion == JOptionPane.YES_OPTION){

@@ -3,11 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package minipc.modelo;
-import minipc.hardware.CPU;
-import minipc.hardware.Memoria;
+        
 /**
  *
- * @author elenanito
+ * @author Poll Anthony Garro Vargas - 2024129001
+ * @Universidad: Instituto Tecnológico de Costa Rica
+ * 
+ */
+
+import minipc.hardware.CPU;
+import minipc.hardware.Memoria;
+
+/**
+ * BCP (Bloque de Control de Proceso): representa el estado de un proceso en
+ * un momento dado - su identificador, estado, y una copia de los registros
+ * de la CPU capturados al momento de invocar capturaEstado().
  */
 public class BCP {
     private int idProceso;
@@ -19,6 +29,9 @@ public class BCP {
     private int cxGuardado;
     private int dxGuardado;
     
+        // E: idProceso (int) - identificador del proceso; estado (String) - ej. "Nuevo"
+        // S: no aplica (constructor)
+        // R: ninguna
         public BCP(int idProceso, String estado){
             this.idProceso = idProceso;
             this.estado = estado;
@@ -30,6 +43,10 @@ public class BCP {
             this.dxGuardado = 0;
 
         }
+        
+        // E: cpu (CPU) - la CPU de la que se va a copiar el estado actual
+        // S: no aplica (void)
+        // R: ninguna
         public void capturaEstado(CPU cpu){
             this.pcGuardado = cpu.getPC();
             this.acGuardado = cpu.getAC();
@@ -74,16 +91,8 @@ public class BCP {
         public int getDxGuardado(){
             return dxGuardado;
         }
+        
         public static void main(String[] args){
-            Memoria memoria = new Memoria(128, 64);
-            CPU cpu = new CPU(memoria);
-            cpu.setPC(70); 
-
-            BCP bcp = new BCP(1, "Ejecutando");
-            bcp.capturaEstado(cpu);
-
-            System.out.println(bcp.getIdProceso());   
-            System.out.println(bcp.getEstado());          
-            System.out.println(bcp.getPcGuardado());     
+    
     }
 }
