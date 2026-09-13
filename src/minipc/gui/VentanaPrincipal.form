@@ -51,12 +51,8 @@
                   <Component id="btnAsignarMemoria" min="-2" pref="248" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="85" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -83,13 +79,15 @@
                       </Group>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btnEstadisticas" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                          <Component id="btnLimpiar" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                          <Component id="btnEjecutar" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                          <Component id="btnPaso_Paso" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                          <Component id="btnCargar" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="btnAsignarMemoria" alignment="0" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="btnEstadisticas" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                              <Component id="btnLimpiar" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                              <Component id="btnEjecutar" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                              <Component id="btnPaso_Paso" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                              <Component id="btnCargar" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
