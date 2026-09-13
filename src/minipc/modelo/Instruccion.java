@@ -1,6 +1,17 @@
 package minipc.modelo;
+/**
+ *
+ * @author Poll Anthony Garro Vargas - 2024129001
+ * @Universidad: Instituto Tecnológico de Costa Rica
+ * 
+ */
 import minipc.util.ConversorBinario;
 
+/**
+ * Instruccion: representa una linea del programa .asm ya procesada, con su
+ * operacion, registro, valor (si aplica) y los codigos binarios correspondientes,
+ * lista para guardarse en memoria y mostrarse en la interfaz.
+ */
 public class Instruccion {
     private String operacion;        
     private String registro;        
@@ -8,6 +19,10 @@ public class Instruccion {
     private String codigoBinarioOperacion;  
     private String codigoBinarioValor;      
     
+    // E: operacion (String) - ej. "MOV", "LOAD"; registro (String) - ej. "AX";
+    //    valor (Integer) - puede ser null si la operacion no lleva valor numerico
+    // S: no aplica (constructor)
+    // R: operacion y registro deben ser validos segun TipoOPeracion y ConversorBinario
     public Instruccion(String operacion, String registro, Integer valor){
         this.operacion = operacion;
         this.registro = registro;
@@ -42,7 +57,10 @@ public class Instruccion {
         return codigoBinarioValor;
     }
     
- 
+    // E: no aplica
+    // S: String - el codigo binario completo de la instruccion (operacion+registro,
+    //    mas el valor si existe), listo para guardarse en una sola posicion de memoria
+    // R: ninguna
     public String getCodigoBinarioCompleto(){
         if(codigoBinarioValor != null){
             return codigoBinarioOperacion + " " + codigoBinarioValor;
