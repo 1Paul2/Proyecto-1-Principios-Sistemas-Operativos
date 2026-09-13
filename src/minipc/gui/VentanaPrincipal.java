@@ -36,7 +36,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private BCP bcp;
     private List<Instruccion> instruccionesActuales;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName());
-
+    private long tiempoInicio;
+    
     public VentanaPrincipal() {
         initComponents();
     }
@@ -277,10 +278,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     .addComponent(btnAsignarMemoria, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtTamanoTotal, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -299,13 +298,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                             .addComponent(jScrollPane1)
                             .addComponent(jScrollPane2)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnEstadisticas, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnEjecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnPaso_Paso, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCargar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAsignarMemoria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAsignarMemoria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnEstadisticas, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnEjecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnPaso_Paso, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnCargar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -458,6 +458,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         DefaultTableModel modeloVacioMemoria = new DefaultTableModel(new Object[0][2], new String[]{"Posición", "Valor en memoria"});
         tablaMemoria.setModel(modeloVacioMemoria);
+        
+        JOptionPane.showMessageDialog(this, "Datos y memoria limpiados con exito.");
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     // E: evt (ActionEvent) - clic del boton "Estadisticas"
@@ -493,7 +495,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         }
 
+        long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;
+        String estadoPrograma = cpu.programaTerminado() ? "Terminado" : "En proceso";
+        
         String mensaje = "=== PROGRESO DE EJECUCIÓN ===\n";
+        mensaje = mensaje + "Estado: " + estadoPrograma + "\n";
+        mensaje = mensaje + "Duración: " + tiempoTranscurrido + " ms\n";
         mensaje = mensaje + "Instrucciones ejecutadas: " + instruccionesEjecutadas + " de " + instruccionesActuales.size() + "\n";
         mensaje = mensaje + "PC actual: " + cpu.getPC() + "\n";
         mensaje = mensaje + "\n";
@@ -545,6 +552,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     memoria = new Memoria(256, 64);
                 }
                 cpu = new CPU(memoria);
+                tiempoInicio = System.currentTimeMillis();
                 cpu.cargarPrograma(instruccionesActuales);
 
                 bcp = new BCP(1, "Nuevo");
