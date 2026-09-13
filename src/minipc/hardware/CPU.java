@@ -99,7 +99,7 @@ public class CPU {
         int espacioDisponible = memoria.getTamanoTotal() - memoria.getInicioUsuario();
 
         if(instrucciones.size() > espacioDisponible){
-            throw new RuntimeException("El programa necesita " + instrucciones.size() + " posiciones, pero solo hay " + espacioDisponible + " disponibles para el usuario");
+            throw new RuntimeException("El programa necesita " + instrucciones.size() + " de memoria, pero solo hay " + espacioDisponible + " memoria disponibles para el usuario.");
         }
 
         for(int i = 0; i < instrucciones.size(); i++){
