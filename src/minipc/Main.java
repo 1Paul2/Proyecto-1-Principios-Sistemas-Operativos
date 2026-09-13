@@ -1,8 +1,4 @@
 package minipc;
-/**
- *
- * @author elenanito
- */
 
 import minipc.gui.VentanaPrincipal;
 
