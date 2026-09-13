@@ -1,59 +1,53 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package minipc.modelo;
-
 import minipc.util.ConversorBinario;
 
-/**
- *
- * @author elenanito
- */
 public class Instruccion {
-        private String operacion;        
-        private String registro;        
-        private Integer valor;           
-
-        private String codigoBinarioOperacion;  
-        private String codigoBinarioValor;      
+    private String operacion;        
+    private String registro;        
+    private Integer valor;           
+    private String codigoBinarioOperacion;  
+    private String codigoBinarioValor;      
     
-        public Instruccion(String operacion,String registro,Integer valor){
-            this.operacion = operacion;
-            this.registro = registro;
-            this.valor = valor;
-            
-            this.codigoBinarioOperacion = TipoOPeracion.Tipo(operacion) + " " + ConversorBinario.RegistroBinario(registro);
-            
-            if(valor != null){
-                this.codigoBinarioValor = ConversorBinario.NumeroBinario(valor);
-            }else{
-                this.codigoBinarioValor = null;
-            }
-        }
+    public Instruccion(String operacion, String registro, Integer valor){
+        this.operacion = operacion;
+        this.registro = registro;
+        this.valor = valor;
         
-        public String getoperacion(){
-            return operacion;
-        }
+        this.codigoBinarioOperacion = TipoOPeracion.Tipo(operacion) + " " + ConversorBinario.RegistroBinario(registro);
         
-        public String getregistro(){
-            return registro;
+        if(valor != null){
+            this.codigoBinarioValor = ConversorBinario.NumeroBinario(valor);
+        } else {
+            this.codigoBinarioValor = null;
         }
-        
-        public Integer getvalor(){
-            return valor;
-        }
-        
-        public String getcodigoBinarioOperacion(){
+    }
+    
+    public String getoperacion(){
+        return operacion;
+    }
+    
+    public String getregistro(){
+        return registro;
+    }
+    
+    public Integer getvalor(){
+        return valor;
+    }
+    
+    public String getcodigoBinarioOperacion(){
+        return codigoBinarioOperacion;
+    }
+    
+    public String getcodigoBinarioValor(){
+        return codigoBinarioValor;
+    }
+    
+    // NUEVO: junta todo en un solo String -> esto es lo que se guarda en 1 sola posición de memoria
+    public String getCodigoBinarioCompleto(){
+        if(codigoBinarioValor != null){
+            return codigoBinarioOperacion + " " + codigoBinarioValor;
+        } else {
             return codigoBinarioOperacion;
         }
-        
-        public String getcodigoBinarioValor(){
-            return codigoBinarioValor;
-        }
-        
-    public static void main(String[] args){
-      
-        
     }
 }
