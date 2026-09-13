@@ -51,6 +51,11 @@ public class ParserASM {
             while((linea = lector.readLine()) != null){
                 numeroLinea = numeroLinea + 1;
 
+                if(linea.length() > 200){
+                    lector.close();
+                    throw new RuntimeException("El archivo no parece ser un .asm de texto plano válido (línea " + numeroLinea + " es demasiado larga o contiene datos binarios)");
+                }
+
                 if(linea.trim().isEmpty()){
                     continue;
                 }

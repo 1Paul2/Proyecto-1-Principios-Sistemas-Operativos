@@ -1,18 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package minipc.hardware;
 import minipc.modelo.TipoOPeracion;
-import minipc.util.ConversorBinario;
 import minipc.modelo.Instruccion;
+import minipc.util.ConversorBinario;
 import java.util.List;
-import java.util.ArrayList;
 
-/**
- *
- * @author elenanito
- */
 public class CPU {
     private int PC;
     private String IR;
@@ -33,46 +24,35 @@ public class CPU {
         this.CX = 0;
         this.DX = 0;
         this.IR = "";   
-                
     }
     
-    public int getPC(){
-        return PC;
-    }
-
-    public int getAC(){
-        return AC;
-    }
-
-    public int getAX(){
-        return AX;
-    }
-
-    public int getBX(){
-        return BX;
-    }
-
-    public int getCX(){
-        return CX;
-    }
-
-    public int getDX(){
-        return DX;
-    }
-
-    public String getIR(){
-        return IR;
+    public int getPC(){ return PC; }
+    public int getAC(){ return AC; }
+    public int getAX(){ return AX; }
+    public int getBX(){ return BX; }
+    public int getCX(){ return CX; }
+    public int getDX(){ return DX; }
+    public String getIR(){ return IR; }
+    
+    public void setPC(int nuevoPC){
+        this.PC = nuevoPC;
     }
     
-    
+    // decode ahora devuelve 3 cosas: operacion, registro, y el valor binario (o null si no aplica)
     public String[] decode(String dato){
         String[] partes = dato.split(" ");
         String operacion = TipoOPeracion.BinarioATipo(partes[0]);
         String registro = ConversorBinario.BinarioARegistro(partes[1]);
-
-        String[] resultado = new String[2];
+        
+        String valorBinario = null;
+        if(partes.length == 3){
+            valorBinario = partes[2];
+        }
+        
+        String[] resultado = new String[3];
         resultado[0] = operacion;
         resultado[1] = registro;
+        resultado[2] = valorBinario;
         return resultado;
     }
     
@@ -81,92 +61,61 @@ public class CPU {
         PC = PC + 1;
     }
     
-    public void setPC(int nuevoPC){
-    this.PC = nuevoPC;
-    }
-    
-    public void execute(String operacion, String registro){
+    // execute ahora recibe también el valorBinario (puede ser null)
+    public void execute(String operacion, String registro, String valorBinario){
         if(operacion.equals("LOAD")){
-            if(registro.equals("AX")){
-                AC = AX;
-            }else if(registro.equals("BX")){
-                AC = BX;
-            }else if(registro.equals("CX")){
-                AC = CX;
-            }else if(registro.equals("DX")){
-                AC = DX;
-            }
+            if(registro.equals("AX")){ AC = AX; }
+            else if(registro.equals("BX")){ AC = BX; }
+            else if(registro.equals("CX")){ AC = CX; }
+            else if(registro.equals("DX")){ AC = DX; }
         }else if(operacion.equals("STORE")){
-            if(registro.equals("AX")){
-                AX = AC;
-            }else if(registro.equals("BX")){
-                BX = AC;
-            }else if(registro.equals("CX")){
-                CX = AC;
-            }else if(registro.equals("DX")){
-                DX = AC;
-            }
+            if(registro.equals("AX")){ AX = AC; }
+            else if(registro.equals("BX")){ BX = AC; }
+            else if(registro.equals("CX")){ CX = AC; }
+            else if(registro.equals("DX")){ DX = AC; }
         }else if(operacion.equals("SUB")){
-            if(registro.equals("AX")){
-                AC = AC - AX;
-            }else if(registro.equals("BX")){
-                AC = AC - BX;
-            }else if(registro.equals("CX")){
-                AC = AC - CX;
-            }else if(registro.equals("DX")){
-                AC = AC - DX;
-            }
+            if(registro.equals("AX")){ AC = AC - AX; }
+            else if(registro.equals("BX")){ AC = AC - BX; }
+            else if(registro.equals("CX")){ AC = AC - CX; }
+            else if(registro.equals("DX")){ AC = AC - DX; }
         }else if(operacion.equals("ADD")){
-            if(registro.equals("AX")){
-                AC = AC + AX;
-            }else if(registro.equals("BX")){
-                AC = AC + BX;
-            }else if(registro.equals("CX")){
-                AC = AC + CX;
-            }else if(registro.equals("DX")){
-                AC = AC + DX;
-            }
+            if(registro.equals("AX")){ AC = AC + AX; }
+            else if(registro.equals("BX")){ AC = AC + BX; }
+            else if(registro.equals("CX")){ AC = AC + CX; }
+            else if(registro.equals("DX")){ AC = AC + DX; }
         }else if(operacion.equals("MOV")){
-            String valorBinario = memoria.leer(PC);
+            // YA NO leemos memoria en PC ni avanzamos PC extra: el valor ya vino en decode()
             int valor = ConversorBinario.BinarioAEntero(valorBinario);
-            PC = PC + 1;
-
-            if(registro.equals("AX")){
-                AX = valor;
-            }else if(registro.equals("BX")){
-                BX = valor;
-            }else if(registro.equals("CX")){
-                CX = valor;
-            }else if(registro.equals("DX")){
-                DX = valor;
-            }
+            if(registro.equals("AX")){ AX = valor; }
+            else if(registro.equals("BX")){ BX = valor; }
+            else if(registro.equals("CX")){ CX = valor; }
+            else if(registro.equals("DX")){ DX = valor; }
         }
-        
     }
     
+    // cargarPrograma ahora avanza SIEMPRE 1 posición por instrucción
     public void cargarPrograma(List<Instruccion> instrucciones){
         int posicionActual = memoria.getInicioUsuario();
-        for(int x = 0; x < instrucciones.size(); x++){
-            Instruccion instr = instrucciones.get(x);
-            
-            memoria.escribir(posicionActual, instr.getcodigoBinarioOperacion());
-            posicionActual = posicionActual + 1;
+        int espacioDisponible = memoria.getTamanoTotal() - memoria.getInicioUsuario();
 
-            
-            if(instr.getcodigoBinarioValor() != null){
-                memoria.escribir(posicionActual, instr.getcodigoBinarioValor());
-                posicionActual = posicionActual + 1;
-            }
+        if(instrucciones.size() > espacioDisponible){
+            throw new RuntimeException("El programa necesita " + instrucciones.size() + " posiciones, pero solo hay " + espacioDisponible + " disponibles para el usuario");
+        }
+
+        for(int i = 0; i < instrucciones.size(); i++){
+            Instruccion instr = instrucciones.get(i);
+            memoria.escribir(posicionActual, instr.getCodigoBinarioCompleto());
+            posicionActual = posicionActual + 1;
         }
 
         this.limitePrograma = posicionActual;
         this.PC = memoria.getInicioUsuario();
-     }
+    }
     
     public void pasoAPaso(){
         fetch();
         String[] decodificado = decode(IR);
-        execute(decodificado[0], decodificado[1]);
+        execute(decodificado[0], decodificado[1], decodificado[2]);
     }
     
     public void ejecutarTodo(){
@@ -174,9 +123,12 @@ public class CPU {
             pasoAPaso();
         }
     }
-
+           public boolean programaTerminado(){
+            return PC >= limitePrograma;
+        }
+    
     public static void main(String[] args){
-        List<Instruccion> instrucciones = new ArrayList<>();
+        List<Instruccion> instrucciones = new java.util.ArrayList<>();
         instrucciones.add(new Instruccion("MOV", "AX", 5));
         instrucciones.add(new Instruccion("MOV", "BX", 3));
         instrucciones.add(new Instruccion("LOAD", "AX", null));
@@ -184,15 +136,17 @@ public class CPU {
         instrucciones.add(new Instruccion("SUB", "AX", null));
         instrucciones.add(new Instruccion("STORE", "AX", null));
         instrucciones.add(new Instruccion("MOV", "BX", -8));
-
+        
         Memoria memoria = new Memoria(128, 64);
         CPU cpu = new CPU(memoria);
-
+        
         cpu.cargarPrograma(instrucciones);
+        System.out.println("Instrucciones ocupan posiciones 64 a " + (cpu.limitePrograma - 1) + " (7 instrucciones, 7 posiciones)");
+        
         cpu.ejecutarTodo();
-
-        System.out.println("AC: " + cpu.getAC());  
-        System.out.println("AX: " + cpu.getAX());  
-        System.out.println("BX: " + cpu.getBX());  
+        
+        System.out.println("AC: " + cpu.getAC());  // esperado: 3
+        System.out.println("AX: " + cpu.getAX());  // esperado: 3
+        System.out.println("BX: " + cpu.getBX());  // esperado: -8
     }
 }

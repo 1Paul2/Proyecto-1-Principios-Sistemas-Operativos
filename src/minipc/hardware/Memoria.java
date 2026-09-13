@@ -37,6 +37,15 @@ public class Memoria {
         public int getInicioUsuario(){
             return inicioUsuario;
         }
+        
+        public String[] getTodasLasPosiciones(){
+            return datos;
+        }
+        
+        public int getTamanoTotal(){
+            return tamanoTotal;
+        }
+        
         public static void main(String[] args){
 
         }
