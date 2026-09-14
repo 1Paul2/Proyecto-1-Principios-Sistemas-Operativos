@@ -601,6 +601,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "El tamaño total debe ser de al menos 256", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        if(tamanoTotal > 1024){
+            JOptionPane.showMessageDialog(this, "El tamaño total no puede ser mayor a 1024", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         if(tamanoSistema < 64 || tamanoSistema >= tamanoTotal){
             JOptionPane.showMessageDialog(this, "El tamaño del S.O. debe ser de al menos 64 y menor al tamaño total", "Error", JOptionPane.ERROR_MESSAGE);
