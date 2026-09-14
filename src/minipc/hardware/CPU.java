@@ -53,7 +53,7 @@ public class CPU {
         this.PC = nuevoPC;
     }
     
-    // decode ahora devuelve 3 cosas: operacion, registro, y el valor binario (o null si no aplica)
+    // decode ahora devuelve 3 cosas: operacion, registro, y el valor binario o null
     // E: dato (String) - el codigo binario completo leido de memoria (IR)
     // S: String[3] - [operacion, registro, valorBinario o null]
     // R: dato debe tener el formato "operador registro" o "operador registro valor"
@@ -82,7 +82,7 @@ public class CPU {
         PC = PC + 1;
     }
     
-    // execute ahora recibe también el valorBinario (puede ser null)
+    // execute ahora recibe también el valorBinario puede ser null
     // E: operacion (String), registro (String), valorBinario (String o null)
     // S: no aplica (void)
     // R: modifica los registros de la CPU segun la operacion (LOAD, STORE, ADD, SUB, MOV)
@@ -117,7 +117,6 @@ public class CPU {
         }
     }
     
-    // cargarPrograma ahora avanza SIEMPRE 1 posición por instrucción
     // E: instrucciones (List<Instruccion>) - el programa ya parseado a cargar
     // S: no aplica (void)
     // R: lanza RuntimeException si el programa no cabe en el espacio de usuario disponible

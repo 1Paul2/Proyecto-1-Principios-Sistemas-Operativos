@@ -18,7 +18,7 @@ package minipc.modelo;
  */
 public class TipoOPeracion {
     
-    // E: Type (String) - nombre de la operación, ej. "LOAD", "MOV"
+    // E: Type (String) - nombre de la operación, como "LOAD", "MOV"
     // S: String - código binario de 4 bits de la operación, o null si no es válida
     // R: Type debe ser exactamente una de las 5 operaciones existentes
     public static String Tipo(String Type){
