@@ -9,7 +9,7 @@ import minipc.util.ConversorBinario;
 
 /**
  * Instruccion: representa una linea del programa .asm ya procesada, con su
- * operacion, registro, valor (si aplica) y los codigos binarios correspondientes,
+ * operacion, registro, valor y los codigos binarios correspondientes,
  * lista para guardarse en memoria y mostrarse en la interfaz.
  */
 public class Instruccion {
@@ -19,8 +19,7 @@ public class Instruccion {
     private String codigoBinarioOperacion;  
     private String codigoBinarioValor;      
     
-    // E: operacion (String) - ej. "MOV", "LOAD"; registro (String) - ej. "AX";
-    //    valor (Integer) - puede ser null si la operacion no lleva valor numerico
+    // E: operacion (String) - ej. "MOV", "LOAD"; registro (String) valor (Integer) - puede ser null si la operacion no lleva valor numerico
     // S: no aplica (constructor)
     // R: operacion y registro deben ser validos segun TipoOPeracion y ConversorBinario
     public Instruccion(String operacion, String registro, Integer valor){
@@ -58,8 +57,7 @@ public class Instruccion {
     }
     
     // E: no aplica
-    // S: String - el codigo binario completo de la instruccion (operacion+registro,
-    //    mas el valor si existe), listo para guardarse en una sola posicion de memoria
+    // S: String - el codigo binario completo de la instruccion (operacion+registro, mas el valor si existe), listo para guardarse en una sola posicion de memoria
     // R: ninguna
     public String getCodigoBinarioCompleto(){
         if(codigoBinarioValor != null){

@@ -23,8 +23,7 @@ public class Memoria {
         private int inicioUsuario;
         private int tamanoTotal;
         
-        // E: tamanoTotal (int) - cantidad total de posiciones de memoria;
-        //    tamanoSistema (int) - cantidad de posiciones reservadas para el S.O.
+        // E: tamanoTotal (int) - cantidad total de posiciones de memoria; tamanoSistema (int) - cantidad de posiciones reservadas para el S.O.
         // S: no aplica (constructor)
         // R: tamanoSistema debe ser menor que tamanoTotal
         public Memoria(int tamanoTotal, int tamanoSistema){

@@ -12,7 +12,7 @@ package minipc.util;
  */
 public class ConversorBinario {
     
-    // E: Type (String) - nombre del registro, ej. "AX", "BX", "CX", "DX"
+    // E: Type (String) - nombre del registro, como "AX", "BX", "CX", "DX"
     // S: String - código binario de 4 bits del registro, o null si no es válido
     // R: Type debe ser exactamente uno de los 4 registros existentes
     public static String RegistroBinario(String Type){

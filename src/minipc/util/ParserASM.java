@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Instruccion listas para cargar en memoria.
  */
 public class ParserASM {
-        // E: linea (String) - una línea de texto del archivo .asm, ej. "MOV AX, 5"
+        // E: linea (String) - una línea de texto del archivo .asm, como "MOV AX, 5"
         // S: Instruccion si la línea es válida, o null si la operación/registro no existen
         // R: lanza RuntimeException si el valor numérico no cabe en 8 bits (-127 a 127)
         public static Instruccion procesarLinea(String linea){
@@ -60,8 +60,7 @@ public class ParserASM {
         // E: archivo (File) - el archivo .asm seleccionado por el usuario
         // S: List<Instruccion> - todas las instrucciones válidas leídas del archivo
         // R: lanza IOException si el archivo no se puede abrir; lanza RuntimeException
-        //    si alguna línea tiene formato inválido, valor fuera de rango, o el
-        //    archivo no parece ser texto plano
+        //    si alguna línea tiene formato inválido, valor fuera de rango, o el archivo no parece ser texto plano
         public static List<Instruccion> leerArchivo(File archivo) throws IOException {
             List<Instruccion> instrucciones = new ArrayList<>();
 

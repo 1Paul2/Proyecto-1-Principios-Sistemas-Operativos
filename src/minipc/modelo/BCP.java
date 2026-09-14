@@ -29,7 +29,7 @@ public class BCP {
     private int cxGuardado;
     private int dxGuardado;
     
-        // E: idProceso (int) - identificador del proceso; estado (String) - ej. "Nuevo"
+        // E: idProceso (int) - identificador del proceso; estado (String) 
         // S: no aplica (constructor)
         // R: ninguna
         public BCP(int idProceso, String estado){
