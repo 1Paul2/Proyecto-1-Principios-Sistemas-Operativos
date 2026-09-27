@@ -13,17 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
- * ConfiguracionSistema: guarda y carga los tamaños configurables de la
- * minicomputadora (memoria principal, memoria de sistema, almacenamiento
- * secundario, memoria virtual) desde un archivo de texto tipo
- * "clave=valor" (java.util.Properties), tal como pide el enunciado: la
- * configuración no debe quedar hardcodeada en el código.
- *
- * NOTA: el enunciado no da un valor por defecto para "memoriaSistema"
- * (el espacio reservado para el S.O. dentro de la memoria principal) — se
- * dejó en 32 como valor razonable; ajustar según lo que pida el profesor.
- */
+
 public class ConfiguracionSistema {
 
     private static final int DEFAULT_MEMORIA_PRINCIPAL = 256;

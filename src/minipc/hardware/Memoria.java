@@ -57,14 +57,7 @@ public class Memoria {
             return posicion >= inicioUsuario && posicion < tamanoTotal;
         }
 
-        // NUEVO: protección de memoria — evita que un proceso lea o escriba
-        // fuera del rango que le corresponde según su base (dirección de
-        // inicio) y su alcance (tamaño del proceso), ambos guardados en el BCP.
-        // E: posicion (int) - dirección a la que se quiere acceder;
-        //    base (int) - dirección de inicio del proceso (desde su BCP);
-        //    alcance (int) - tamaño del proceso (desde su BCP)
-        // S: boolean - true si el acceso está dentro del rango permitido
-        // R: ninguna
+
         public boolean accesoPermitido(int posicion, int base, int alcance){
             return posicion >= base && posicion < (base + alcance);
         }

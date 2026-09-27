@@ -7,22 +7,7 @@ package minipc.modelo;
  */
 import minipc.util.ConversorBinario;
 
-/**
- * Instruccion: representa una linea del programa .asm ya procesada, con sus
- * operandos (registros, valores, o código de interrupción según el tipo de
- * operación) y el código binario completo correspondiente, listo para
- * guardarse en memoria y mostrarse en la interfaz.
- *
- * NOTA de diseño: como ahora hay operaciones con formas muy distintas de
- * operandos (0, 1 o 2 registros; 0 o 1 valor; hasta 3 valores para PARAM;
- * un código de interrupción para INT), se generalizó la clase con campos
- * opcionales (quedan en null los que no aplican a la operación). Los
- * getters "clásicos" (getregistro, getvalor) se mantienen para no romper
- * código existente, pero ya NO existen getcodigoBinarioOperacion() /
- * getcodigoBinarioValor() por separado, porque con dos registros o varios
- * valores esa división en dos partes ya no tiene sentido — revisar si algo
- * más (por ejemplo la GUI) dependía de esos dos getters.
- */
+
 public class Instruccion {
     private String operacion;
     private String registro;            // primer registro (o null)
