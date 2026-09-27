@@ -9,15 +9,10 @@ package minipc.hardware;
 
 import minipc.modelo.TipoOPeracion;
 import minipc.modelo.Instruccion;
+import minipc.modelo.TablaPesos;
 import minipc.util.ConversorBinario;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 
 /**
  * CPU: implementa el ciclo fetch-decode-execute del Mini PC, con sus registros
@@ -33,17 +28,21 @@ public class CPU {
     private int CX;
     private int DX;
 
-    // NUEVO: AH y AL se usan únicamente para representar el código de
-    // operación de archivo (AH) y el contenido a leer/escribir (AL) que pide
-    // INT 21H. El enunciado los menciona como parte de esa interrupción pero
-    // no los lista como registros generales, así que aquí son campos aparte
-    // y no se tocan con LOAD/STORE/ADD/SUB/MOV. Ajustar si el profesor
-    // esperaba otra convención.
+
     private int AH;
     private int AL;
 
     private Memoria memoria;
     private int limitePrograma;
+
+    // NUEVO: referencia al almacenamiento secundario, usada por INT 21H
+    // (crear/abrir/leer/escribir/eliminar archivos). Puede quedar en null
+    // si la CPU se usa sin disco; en ese caso INT 21H lanza una excepción.
+    private Disco disco;
+
+    // NUEVO: tiempo de CPU simulado, acumulado con el peso de cada
+    // instrucción ejecutada (tabla del enunciado), no con reloj real.
+    private int tiempoSimulado;
 
     // NUEVO: pila de tamaño fijo 5, con su propio puntero (tope = -1 vacía)
     private static final int TAMANO_PILA = 5;
@@ -57,8 +56,12 @@ public class CPU {
     // NUEVO: buffer de salida simulando la "pantalla" (INT 10H escribe aquí)
     private List<String> pantalla;
 
-    // NUEVO: entrada simulando el "teclado" (INT 09H lee de aquí)
-    private Scanner teclado;
+    // NUEVO: en vez de leer bloqueante con Scanner (que congelaría la GUI),
+    // INT 09H deja la CPU en "espera de entrada"; la GUI debe consultar
+    // isEsperandoEntrada() después de cada paso y, cuando esté en true,
+    // pedirle el valor al usuario y llamar a entregarEntradaTeclado(valor)
+    // para continuar.
+    private boolean esperandoEntrada;
 
     // NUEVO: bandera de fin de programa, la enciende INT 20H
     private boolean terminado;
@@ -81,8 +84,47 @@ public class CPU {
         this.tope = -1;
         this.banderaIgual = false;
         this.pantalla = new ArrayList<>();
-        this.teclado = new Scanner(System.in);
+        this.esperandoEntrada = false;
         this.terminado = false;
+        this.disco = null;
+        this.tiempoSimulado = 0;
+    }
+
+    // E: no aplica
+    // S: boolean - true si la CPU ejecutó un INT 09H y está esperando que
+    //    le entreguen un valor de teclado antes de poder seguir
+    // R: ninguna
+    public boolean isEsperandoEntrada(){
+        return esperandoEntrada;
+    }
+
+    // E: valor (int) - el valor ingresado por el usuario en la GUI (0-255)
+    // S: no aplica (void)
+    // R: lanza RuntimeException si la CPU no estaba esperando entrada, o si el valor está fuera de 0-255;
+    //    si es válido, lo guarda en DX y libera la espera para poder seguir ejecutando
+    public void entregarEntradaTeclado(int valor){
+        if(!esperandoEntrada){
+            throw new RuntimeException("La CPU no está esperando ningún valor de teclado.");
+        }
+        if(valor < 0 || valor > 255){
+            throw new RuntimeException("El valor debe estar entre 0 y 255.");
+        }
+        DX = valor;
+        esperandoEntrada = false;
+    }
+
+    // E: disco (AlmacenamientoSecundario) - el disco que va a usar esta CPU para INT 21H
+    // S: no aplica (void)
+    // R: ninguna
+    public void setDisco(Disco disco){
+        this.disco = disco;
+    }
+
+    // E: no aplica
+    // S: int - el tiempo de CPU simulado acumulado (suma de pesos de las instrucciones ejecutadas)
+    // R: ninguna
+    public int getTiempoSimulado(){
+        return tiempoSimulado;
     }
 
     public int getPC(){ return PC; }
@@ -104,9 +146,6 @@ public class CPU {
         this.PC = nuevoPC;
     }
 
-    // ============================================================
-    //  PILA (PUSH / POP) — tamaño fijo 5, con desbordamiento
-    // ============================================================
 
     // E: valor (int) - el valor a apilar
     // S: no aplica (void)
@@ -135,13 +174,7 @@ public class CPU {
     //  DECODE
     // ============================================================
 
-    // decode ahora devuelve la operación y el arreglo de "partes" restante
-    // (sin el código de operación), para que execute() lo interprete según
-    // el tipo de instrucción (algunas traen 1 registro, otras 2, otras un
-    // desplazamiento, etc.)
-    // E: dato (String) - el codigo binario completo leido de memoria (IR)
-    // S: Object[2] - [operacion (String), partes (String[] con el resto de tokens binarios)]
-    // R: dato debe tener el formato "operador [operando1] [operando2] ..."
+
     public Object[] decode(String dato){
         String[] tokens = dato.trim().split(" ");
         String operacion = TipoOPeracion.BinarioATipo(tokens[0]);
@@ -353,24 +386,15 @@ public class CPU {
                 pantalla.add(String.valueOf(DX));
                 break;
 
-            case 0x09: {
-                // Entrada de teclado (solo numérico 0-255), se guarda en DX, termina con ENTER
-                int valor = teclado.nextInt();
-                if(valor < 0 || valor > 255){
-                    throw new RuntimeException("El valor ingresado debe estar entre 0 y 255.");
-                }
-                DX = valor;
+            case 0x09:
+                // Entrada de teclado (solo numérico 0-255): la CPU se marca
+                // como "esperando entrada" y se detiene aquí. La GUI debe
+                // pedirle el valor al usuario y llamar a
+                // entregarEntradaTeclado(valor) para que la ejecución siga.
+                esperandoEntrada = true;
                 break;
-            }
 
             case 0x21:
-                // Manejo de archivos. DX = nombre de archivo (como texto),
-                // AH = sub-operación, AL = contenido a leer/escribir.
-                // NOTA: esto asume que en algún punto DX/AH se cargaron con
-                // el nombre de archivo y el código de operación antes del
-                // INT 21H; ajustar según cómo se resuelva "DX como cadena de
-                // texto" en el diseño final (probablemente necesite un mapa
-                // registro->nombre de archivo en vez de un int).
                 ejecutarOperacionArchivo();
                 break;
 
@@ -379,42 +403,51 @@ public class CPU {
         }
     }
 
-    // NOTA: implementación preliminar de INT 21H. El almacenamiento
-    // secundario probablemente debería vivir en su propia clase (Disco /
-    // Almacenamiento) en vez de manejarse directo desde la CPU con
-    // java.io.File; esto es solo un punto de partida para no dejar el caso
-    // vacío.
+
     private void ejecutarOperacionArchivo(){
-        String nombreArchivo = "archivo_" + DX + ".txt";
-        try {
-            switch(AH){
-                case 0x3C: // crear archivo
-                    new File(nombreArchivo).createNewFile();
-                    break;
-                case 0x3D: // abrir archivo
-                    // no-op explícito: abrir se resuelve al leer/escribir
-                    break;
-                case 0x4D: { // leer archivo
-                    BufferedReader lector = new BufferedReader(new FileReader(nombreArchivo));
-                    String linea = lector.readLine();
-                    lector.close();
-                    AL = (linea != null) ? Integer.parseInt(linea.trim()) : 0;
-                    break;
+        if(disco == null){
+            throw new RuntimeException("No hay almacenamiento secundario asignado a esta CPU (falta llamar a setDisco()).");
+        }
+
+        String nombreArchivo = "archivo_" + DX;
+
+        switch(AH){
+            case 0x3C: // crear archivo
+                disco.crearArchivo(nombreArchivo, 1);
+                break;
+
+            case 0x3D: // abrir archivo
+                if(disco.buscarArchivo(nombreArchivo) == -1){
+                    throw new RuntimeException("El archivo \"" + nombreArchivo + "\" no existe.");
                 }
-                case 0x40: { // escribir archivo
-                    FileWriter escritor = new FileWriter(nombreArchivo);
-                    escritor.write(String.valueOf(AL));
-                    escritor.close();
-                    break;
+                break;
+
+            case 0x4D: { // leer archivo
+                int direccion = disco.buscarArchivo(nombreArchivo);
+                if(direccion == -1){
+                    throw new RuntimeException("El archivo \"" + nombreArchivo + "\" no existe.");
                 }
-                case 0x41: // eliminar archivo
-                    new File(nombreArchivo).delete();
-                    break;
-                default:
-                    throw new RuntimeException("Sub-operación de archivo no reconocida (AH = " + AH + ")");
+                AL = ConversorBinario.BinarioAEntero(disco.leer(direccion));
+                break;
             }
-        } catch(IOException e){
-            throw new RuntimeException("Error de E/S en INT 21H: " + e.getMessage());
+
+            case 0x40: { // escribir archivo
+                int direccion = disco.buscarArchivo(nombreArchivo);
+                if(direccion == -1){
+                    // si no existe, se crea automáticamente (comportamiento
+                    // típico de "escribir": crea si no existe)
+                    direccion = disco.crearArchivo(nombreArchivo, 1);
+                }
+                disco.escribir(direccion, ConversorBinario.NumeroBinario(AL));
+                break;
+            }
+
+            case 0x41: // eliminar archivo
+                disco.eliminarArchivo(nombreArchivo);
+                break;
+
+            default:
+                throw new RuntimeException("Sub-operación de archivo no reconocida (AH = " + AH + ")");
         }
     }
 
@@ -442,6 +475,7 @@ public class CPU {
         this.limitePrograma = posicionActual;
         this.PC = memoria.getInicioUsuario();
         this.terminado = false;
+        this.esperandoEntrada = false;
     }
 
     // E: no aplica
@@ -452,6 +486,14 @@ public class CPU {
         Object[] decodificado = decode(IR);
         String operacion = (String) decodificado[0];
         String[] partes = (String[]) decodificado[1];
+
+
+        Integer codigoInterrupcion = null;
+        if(operacion.equals("INT")){
+            codigoInterrupcion = ConversorBinario.BinarioAEntero(partes[0]);
+        }
+        tiempoSimulado = tiempoSimulado + TablaPesos.peso(operacion, codigoInterrupcion);
+
         execute(operacion, partes);
     }
 
@@ -460,7 +502,7 @@ public class CPU {
     // R: ejecuta pasoAPaso() en ciclo hasta que el PC alcance el limite del
     //    programa o se ejecute INT 20H (terminado = true)
     public void ejecutarTodo(){
-        while(PC < limitePrograma && !terminado){
+        while(PC < limitePrograma && !terminado && !esperandoEntrada){
             pasoAPaso();
         }
     }

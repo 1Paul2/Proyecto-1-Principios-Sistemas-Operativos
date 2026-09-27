@@ -94,12 +94,7 @@ public class ConversorBinario {
         return Dato;
     }
 
-    // NUEVO: convierte un código escrito en el .asm como hexadecimal con
-    // sufijo "H" (ej. "20H", "3Ch", "09h") a su valor decimal entero.
-    // Se usa para el operando de INT (20H, 10H, 09H, 21H).
-    // E: texto (String) - código hexadecimal terminado en 'H' o 'h'
-    // S: int - valor decimal equivalente
-    // R: texto debe terminar en 'H'/'h' y el resto debe ser hexadecimal válido
+
     public static int HexAEntero(String texto){
         String limpio = texto.trim().toUpperCase();
         if(limpio.endsWith("H")){
