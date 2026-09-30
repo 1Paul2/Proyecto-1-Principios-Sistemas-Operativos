@@ -48,7 +48,12 @@ public class CPU {
     public int getCX(){ return CX; }
     public int getDX(){ return DX; }
     public String getIR(){ return IR; }
-    
+    public void setAC(int ac){ this.AC = ac; }
+    public void setAX(int ax){ this.AX = ax; }
+    public void setBX(int bx){ this.BX = bx; }
+    public void setCX(int cx){ this.CX = cx; }
+    public void setDX(int dx){ this.DX = dx; }
+    public void setIR(String ir){ this.IR = ir; }
     public void setPC(int nuevoPC){
         this.PC = nuevoPC;
     }
