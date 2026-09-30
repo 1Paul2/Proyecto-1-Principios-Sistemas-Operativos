@@ -22,6 +22,7 @@ public class Memoria {
         private String[] datos;
         private int inicioUsuario;
         private int tamanoTotal;
+        private boolean[] ocupado;
         
         // E: tamanoTotal (int) - cantidad total de posiciones de memoria; tamanoSistema (int) - cantidad de posiciones reservadas para el S.O.
         // S: no aplica (constructor)
@@ -32,15 +33,18 @@ public class Memoria {
                 this.datos = new String[tamanoTotal];
                 for(int x = 0; x < datos.length; x++){
                     datos[x] = "00000000";
-            }
+            }   
+                this.ocupado = new boolean[tamanoTotal];
                 
         }
+        
         
         // E: posicion (int) - indice de memoria a escribir; valorBinario (String) - dato a guardar
         // S: no aplica (void)
         // R: posicion debe estar entre 0 y tamanoTotal-1
         public void escribir(int posicion, String valorBinario){
             datos[posicion] = valorBinario;
+            ocupado[posicion] = true;
         }
 
         // E: posicion (int) - indice de memoria a leer
@@ -69,7 +73,26 @@ public class Memoria {
             return tamanoTotal;
         }
         
-        public static void main(String[] args){
-
+        public void liberar(int base, int tamanio) {
+            for (int x = base; x < (base + tamanio); x++) {
+                ocupado[x] = false;
+                datos[x] = "00000000";
+            }
         }
+        
+        public int encontrarHueco(int tamanio) {
+            int contador = 0;
+            for (int x = inicioUsuario; x < tamanoTotal; x++) {
+                if (ocupado[x] == false) {
+                    contador++;
+                    if (contador == tamanio) {
+                        return x - tamanio + 1;
+                    }
+                } else {
+                    contador = 0;
+                }
+            }
+            return -1;
+        }
+
 }
