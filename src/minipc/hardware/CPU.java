@@ -136,12 +136,12 @@ public class CPU {
     public int getAH(){ return AH; }
     public int getAL(){ return AL; }
     public String getIR(){ return IR; }
-    public boolean getBanderaIgual(){ return banderaIgual; }
-    public boolean isTerminado(){ return terminado; }
-    public List<String> getPantalla(){ return pantalla; }
-    public int[] getPila(){ return pila; }
-    public int getTope(){ return tope; }
-
+    public void setAC(int ac){ this.AC = ac; }
+    public void setAX(int ax){ this.AX = ax; }
+    public void setBX(int bx){ this.BX = bx; }
+    public void setCX(int cx){ this.CX = cx; }
+    public void setDX(int dx){ this.DX = dx; }
+    public void setIR(String ir){ this.IR = ir; }
     public void setPC(int nuevoPC){
         this.PC = nuevoPC;
     }
