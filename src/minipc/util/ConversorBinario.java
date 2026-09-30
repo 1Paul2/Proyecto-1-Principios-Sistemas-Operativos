@@ -93,6 +93,15 @@ public class ConversorBinario {
         }
         return Dato;
     }
+
+
+    public static int HexAEntero(String texto){
+        String limpio = texto.trim().toUpperCase();
+        if(limpio.endsWith("H")){
+            limpio = limpio.substring(0, limpio.length() - 1);
+        }
+        return Integer.parseInt(limpio, 16);
+    }
     
     public static void main(String[] args){
 

@@ -57,6 +57,20 @@ public class Memoria {
             return posicion >= inicioUsuario && posicion < tamanoTotal;
         }
 
+
+        public boolean accesoPermitido(int posicion, int base, int alcance){
+            return posicion >= base && posicion < (base + alcance);
+        }
+
+        // E: posicion (int), base (int), alcance (int) - igual que accesoPermitido
+        // S: no aplica (void)
+        // R: lanza RuntimeException si el acceso está fuera del rango permitido
+        public void validarAcceso(int posicion, int base, int alcance){
+            if(!accesoPermitido(posicion, base, alcance)){
+                throw new RuntimeException("Violación de acceso a memoria: el proceso (base=" + base + ", alcance=" + alcance + ") intentó acceder a la posición " + posicion + ", fuera de su espacio asignado.");
+            }
+        }
+
         public int getInicioUsuario(){
             return inicioUsuario;
         }
