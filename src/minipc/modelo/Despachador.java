@@ -20,12 +20,12 @@ public class Despachador {
     }
 
     public void despachar(BCP bcp) {
-        // 1. restaurar estado del BCP en la CPU
-        // 2. cambiar estado a "Ejecución"
+        cpu.setBcpActual(bcp);
+        bcp.restaurarEstado(cpu);
+        bcp.setEstado("Ejecución");
     }
-
+    
     public void capturar(BCP bcp) {
-        // 1. capturar estado de la CPU en el BCP
-        // 2. no cambiar de estado (lo decide quien llama)
+        bcp.capturaEstado(cpu);
     }
 }
