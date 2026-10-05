@@ -5,7 +5,7 @@ import minipc.modelo.Instruccion;
 import minipc.util.ConversorBinario;
 import java.util.List;
 import minipc.modelo.BCP;
-
+import java.util.ArrayList;
 public class CPU {
     private int PC;
     private String IR;
@@ -17,6 +17,7 @@ public class CPU {
     private Memoria memoria;
     private int limitePrograma;
     private BCP bcpActual;
+    private boolean flagIgual;
     
     public CPU(Memoria memoria){
         this.memoria = memoria;
@@ -28,6 +29,7 @@ public class CPU {
         this.DX = 0;
         this.IR = "";   
         this.bcpActual = null;
+        this.flagIgual = false;
     }
     
     public int getPC(){ return PC; }
@@ -126,8 +128,34 @@ public class CPU {
         }else if(operacion.equals("JMP")){
             int desplazamiento = ConversorBinario.BinarioAEntero(valorBinario);
             PC = PC + desplazamiento - 1;
+        }else if(operacion.equals("CMP")){
+            int valor = 0;
+            if(registro.equals("AX")){ valor = AX; }
+            else if(registro.equals("BX")){ valor = BX; }
+            else if(registro.equals("CX")){ valor = CX; }
+            else if(registro.equals("DX")){ valor = DX; }
+            flagIgual = (AC == valor);
+        }else if(operacion.equals("JE")){
+            if(flagIgual){
+                int desplazamiento = ConversorBinario.BinarioAEntero(valorBinario);
+                PC = PC + desplazamiento - 1;
+            }
+        }else if(operacion.equals("JNE")){
+            if(!flagIgual){
+                int desplazamiento = ConversorBinario.BinarioAEntero(valorBinario);
+                PC = PC + desplazamiento - 1;
+            }
+        }else if(operacion.equals("SWAP")){
+            int temp;
+            if(registro.equals("AX")){ temp = AX; AX = AC; AC = temp; }
+            else if(registro.equals("BX")){ temp = BX; BX = AC; AC = temp; }
+            else if(registro.equals("CX")){ temp = CX; CX = AC; AC = temp; }
+            else if(registro.equals("DX")){ temp = DX; DX = AC; AC = temp; }
+        }else if(operacion.equals("PARAM")){
+            int valor = ConversorBinario.BinarioAEntero(valorBinario);
+            bcpActual.push(valor);
         }
-    }
+   }
     
     public void cargarPrograma(List<Instruccion> instrucciones){
         int posicionActual = memoria.getInicioUsuario();
@@ -169,5 +197,59 @@ public class CPU {
 
     public void setBcpActual(BCP bcp) {
         this.bcpActual = bcp;
+    }
+    
+    public boolean isFlagIgual() {
+    return flagIgual;
+}
+
+    public void setFlagIgual(boolean flag) {
+        this.flagIgual = flag;
+    }
+    
+    public static void main(String[] args) {
+        // 1. Crear memoria y CPU
+        Memoria memoria = new Memoria(256, 20);
+        CPU cpu = new CPU(memoria);
+
+        // 2. Crear BCP (necesario para que no falle si hay PUSH/POP)
+        BCP bcp = new BCP(1, "Nuevo");
+        bcp.setTamanioProceso(10);
+        bcp.setDireccionBase(20);
+        cpu.setBcpActual(bcp);
+
+        // 3. Programa de prueba
+        List<Instruccion> programa = new ArrayList<>();
+        programa.add(new Instruccion("MOV", "AX", 5));    // Pos 20: AX = 5
+        programa.add(new Instruccion("LOAD", "AX", null)); // Pos 21: AC = AX = 5
+        programa.add(new Instruccion("CMP", "AX", null));  // Pos 22: flag = (AC == AX) = true
+        programa.add(new Instruccion("JE", "AX", 2));      // Pos 23: si igual, salta a 25
+        programa.add(new Instruccion("MOV", "BX", 99));    // Pos 24: se salta
+        programa.add(new Instruccion("MOV", "CX", 1));     // Pos 25: CX = 1
+        programa.add(new Instruccion("CMP", "BX", null));  // Pos 26: flag = (AC == BX) = false
+        programa.add(new Instruccion("JNE", "AX", 2));     // Pos 27: si NO igual, salta a 29
+        programa.add(new Instruccion("MOV", "DX", 99));    // Pos 28: se salta
+        programa.add(new Instruccion("MOV", "DX", 7));     // Pos 29: DX = 7
+
+        // 4. Cargar y ejecutar
+        cpu.cargarPrograma(programa);
+
+        while (!cpu.programaTerminado()) {
+            cpu.pasoAPaso();
+            System.out.println("PC=" + cpu.getPC() 
+                + " AC=" + cpu.getAC()
+                + " AX=" + cpu.getAX() 
+                + " BX=" + cpu.getBX() 
+                + " CX=" + cpu.getCX() 
+                + " DX=" + cpu.getDX()
+                + " flag=" + cpu.isFlagIgual());
+        }
+
+        // 5. Resultado final
+        System.out.println("--- FINAL ---");
+        System.out.println("AX = " + cpu.getAX());  // 5
+        System.out.println("BX = " + cpu.getBX());  // 0
+        System.out.println("CX = " + cpu.getCX());  // 1
+        System.out.println("DX = " + cpu.getDX());  // 7
     }
 }

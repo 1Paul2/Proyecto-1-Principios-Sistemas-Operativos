@@ -44,6 +44,14 @@ public class TipoOperacion {
             Dato = "1111"; 
         }else if(Type.equals("JMP")){
             Dato = "1001";
+        }else if(Type.equals("CMP")){
+            Dato = "1010"; 
+        }else if(Type.equals("JE")){
+            Dato = "1011"; 
+        }else if(Type.equals("JNE")){
+            Dato = "1100"; 
+        }else if(Type.equals("SWAP")){
+            Dato = "1000"; 
         }else{
             Dato = null;
         }
@@ -75,6 +83,14 @@ public class TipoOperacion {
             Dato = "POP";  
         }else if(binario.equals("1001")){
             Dato = "JMP";
+         }else if(binario.equals("1010")){
+             Dato = "CMP"; 
+         }else if(binario.equals("1011")){
+             Dato = "JE"; 
+         }else if(binario.equals("1100")){
+             Dato = "JNE"; 
+         }else if(binario.equals("1000")){
+             Dato = "SWAP"; 
          }else{
             Dato = null;
         }
