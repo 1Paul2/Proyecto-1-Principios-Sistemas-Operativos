@@ -238,5 +238,8 @@ public class BCP {
         public void agregarArchivoAbierto(String archivo){
             this.archivosAbiertos.add(archivo);
         }
+        public int getTopePila() {
+            return topePila;
+        }
         
 }

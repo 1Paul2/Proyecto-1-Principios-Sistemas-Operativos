@@ -55,6 +55,13 @@ public class ConversorBinario {
         return Dato;
     }
   
+    public static String BinarioAInt(String binario){
+        if(binario.equals("0001")) return "INT20";
+        if(binario.equals("0010")) return "INT10";
+        if(binario.equals("0011")) return "INT09";
+        if(binario.equals("0100")) return "INT21";
+        return null;
+    }
     // E: binario (String) - cadena de 8 bits (1 bit de signo + 7 bits de valor)
     // S: int - el valor entero representado, positivo o negativo
     // R: binario debe tener exactamente 8 caracteres, solo '0' y '1'

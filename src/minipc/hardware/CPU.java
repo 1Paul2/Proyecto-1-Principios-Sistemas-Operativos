@@ -52,13 +52,19 @@ public class CPU {
     public String[] decode(String dato){
         String[] partes = dato.split(" ");
         String operacion = TipoOperacion.BinarioATipo(partes[0]);
-        String registro = ConversorBinario.BinarioARegistro(partes[1]);
-        
+        String registro;
+
+        if(operacion != null && operacion.equals("INT")){
+            registro = ConversorBinario.BinarioAInt(partes[1]);
+        } else {
+            registro = ConversorBinario.BinarioARegistro(partes[1]);
+        }
+
         String valorBinario = null;
         if(partes.length == 3){
             valorBinario = partes[2];
         }
-        
+
         String[] resultado = new String[3];
         resultado[0] = operacion;
         resultado[1] = registro;
@@ -154,6 +160,18 @@ public class CPU {
         }else if(operacion.equals("PARAM")){
             int valor = ConversorBinario.BinarioAEntero(valorBinario);
             bcpActual.push(valor);
+        }else if(operacion.equals("INT")){
+            if(registro != null){
+                if(registro.equals("INT20")){
+                    PC = limitePrograma;
+                }else if(registro.equals("INT10")){
+                    System.out.println("PANTALLA: " + DX);
+                }else if(registro.equals("INT09")){
+                    System.out.println("TECLADO: (no implementado aún)");
+                }else if(registro.equals("INT21")){
+                    System.out.println("ARCHIVOS: (no implementado aún)");
+                }
+            }
         }
    }
     
@@ -208,48 +226,33 @@ public class CPU {
     }
     
     public static void main(String[] args) {
-        // 1. Crear memoria y CPU
         Memoria memoria = new Memoria(256, 20);
         CPU cpu = new CPU(memoria);
 
-        // 2. Crear BCP (necesario para que no falle si hay PUSH/POP)
         BCP bcp = new BCP(1, "Nuevo");
         bcp.setTamanioProceso(10);
         bcp.setDireccionBase(20);
         cpu.setBcpActual(bcp);
 
-        // 3. Programa de prueba
         List<Instruccion> programa = new ArrayList<>();
-        programa.add(new Instruccion("MOV", "AX", 5));    // Pos 20: AX = 5
-        programa.add(new Instruccion("LOAD", "AX", null)); // Pos 21: AC = AX = 5
-        programa.add(new Instruccion("CMP", "AX", null));  // Pos 22: flag = (AC == AX) = true
-        programa.add(new Instruccion("JE", "AX", 2));      // Pos 23: si igual, salta a 25
-        programa.add(new Instruccion("MOV", "BX", 99));    // Pos 24: se salta
-        programa.add(new Instruccion("MOV", "CX", 1));     // Pos 25: CX = 1
-        programa.add(new Instruccion("CMP", "BX", null));  // Pos 26: flag = (AC == BX) = false
-        programa.add(new Instruccion("JNE", "AX", 2));     // Pos 27: si NO igual, salta a 29
-        programa.add(new Instruccion("MOV", "DX", 99));    // Pos 28: se salta
-        programa.add(new Instruccion("MOV", "DX", 7));     // Pos 29: DX = 7
+        programa.add(new Instruccion("MOV", "AX", 5));    // AX = 5
+        programa.add(new Instruccion("MOV", "BX", 99));   // BX = 99
+        programa.add(new Instruccion("INT", "AX", 1));    // INT 20H (AX → binario 0001)
+        programa.add(new Instruccion("MOV", "CX", 99));   // no se ejecuta
 
-        // 4. Cargar y ejecutar
         cpu.cargarPrograma(programa);
 
         while (!cpu.programaTerminado()) {
             cpu.pasoAPaso();
-            System.out.println("PC=" + cpu.getPC() 
-                + " AC=" + cpu.getAC()
-                + " AX=" + cpu.getAX() 
-                + " BX=" + cpu.getBX() 
-                + " CX=" + cpu.getCX() 
-                + " DX=" + cpu.getDX()
-                + " flag=" + cpu.isFlagIgual());
+            System.out.println("PC=" + cpu.getPC()
+                + " AX=" + cpu.getAX()
+                + " BX=" + cpu.getBX()
+                + " CX=" + cpu.getCX());
         }
 
-        // 5. Resultado final
         System.out.println("--- FINAL ---");
         System.out.println("AX = " + cpu.getAX());  // 5
-        System.out.println("BX = " + cpu.getBX());  // 0
-        System.out.println("CX = " + cpu.getCX());  // 1
-        System.out.println("DX = " + cpu.getDX());  // 7
+        System.out.println("BX = " + cpu.getBX());  // 99
+        System.out.println("CX = " + cpu.getCX());  // 0 (no se ejecutó)
     }
 }

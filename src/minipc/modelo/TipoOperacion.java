@@ -37,7 +37,7 @@ public class TipoOperacion {
         }else if(Type.equals("INC")){
             Dato = "0110"; 
         }else if(Type.equals("DEC")){
-                Dato = "0111"; 
+            Dato = "0111"; 
         }else if(Type.equals("PUSH")){
             Dato = "1110"; 
         }else if(Type.equals("POP")){
@@ -52,6 +52,10 @@ public class TipoOperacion {
             Dato = "1100"; 
         }else if(Type.equals("SWAP")){
             Dato = "1000"; 
+        }else if(Type.equals("PARAM")){
+            Dato = "1101"; 
+        }else if(Type.equals("INT")){
+            Dato = "0000"; 
         }else{
             Dato = null;
         }
@@ -91,6 +95,10 @@ public class TipoOperacion {
              Dato = "JNE"; 
          }else if(binario.equals("1000")){
              Dato = "SWAP"; 
+         }else if(binario.equals("1101")){
+             Dato = "PARAM"; 
+         }else if(binario.equals("0000")){
+             Dato = "INT"; 
          }else{
             Dato = null;
         }
