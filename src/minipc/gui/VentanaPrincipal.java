@@ -159,16 +159,12 @@ public class VentanaPrincipal extends JFrame {
         logo.setPreferredSize(new Dimension(46, 46));
         titulo.add(logo);
 
-        JPanel textos = new JPanel(new GridLayout(2, 1));
+        JPanel textos = new JPanel(new GridLayout(1, 1));
         textos.setOpaque(false);
         JLabel lblTitulo = new JLabel("Mini PC  ·  Gestor de Procesos");
         lblTitulo.setFont(Tema.TITULO);
         lblTitulo.setForeground(Tema.TEXTO);
-        JLabel lblSub = new JLabel("IC-6600 Principios de Sistemas Operativos  ·  1 CPU  ·  Planificación FCFS  ·  hasta 5 procesos");
-        lblSub.setFont(Tema.SUBTITULO);
-        lblSub.setForeground(Tema.TEXTO_SUAVE);
         textos.add(lblTitulo);
-        textos.add(lblSub);
         titulo.add(textos);
         fila1.add(titulo, BorderLayout.WEST);
 
