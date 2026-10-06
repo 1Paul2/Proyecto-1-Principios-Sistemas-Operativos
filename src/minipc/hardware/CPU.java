@@ -319,7 +319,14 @@ public class CPU {
     }
 
     // PARAM v1, v2, v3: mete cada valor en la pila, en orden
+    // Se valida antes de meter el primero: si no caben todos, no se mete ninguno
     private void ejecutarPARAM(String[] p){
+        int cantidad = p.length - 1;
+        int libres = 4 - bcpActual.getTopePila();          // la pila tiene 5 posiciones (0 a 4)
+        if (cantidad > libres) {
+            throw new RuntimeException("Desbordamiento de pila en el proceso " + bcpActual.getIdProceso()
+                + ": PARAM necesita " + cantidad + " espacios y solo quedan " + libres);
+        }
         for(int i = 1; i < p.length; i++){
             bcpActual.push(Integer.parseInt(p[i]));
         }
