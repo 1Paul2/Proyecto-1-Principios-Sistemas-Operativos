@@ -15,13 +15,22 @@ public class Disco {
     private int tamanoMemoriaVirtual;
 
     public Disco(int tamanoTotal) {
+        this(tamanoTotal, 64);
+    }
+
+    // E: tamanoTotal (int) - posiciones del disco; tamanoMemoriaVirtual (int) - posiciones reservadas al final
+    // S: no aplica (constructor)
+    // R: tamanoTotal debe ser mayor que índice + memoria virtual
+    public Disco(int tamanoTotal, int tamanoMemoriaVirtual) {
         this.tamanoTotal = tamanoTotal;
         this.datos = new String[tamanoTotal];
         for(int i = 0; i < tamanoTotal; i++){
             datos[i] = "";
         }
-        this.tamanoIndice = 10;         
-        this.tamanoMemoriaVirtual = 64; 
+        // Índice de archivos en los primeros registros del disco: 1 entrada por archivo
+        // (nombre, dirección, tamaño). Con 512 de disco caben 32 archivos.
+        this.tamanoIndice = Math.max(10, tamanoTotal / 16);
+        this.tamanoMemoriaVirtual = tamanoMemoriaVirtual;
     }
 
     public boolean guardarArchivo(String nombre, List<String> contenido){
@@ -65,6 +74,17 @@ public class Disco {
         }
         return true;
     }  
+
+    // E: nombre (String), contenido (List<String>) - contenido nuevo completo del archivo
+    // S: boolean - true si se pudo guardar; si no cabe, el archivo queda como estaba
+    // R: el archivo debe existir
+    public boolean reescribirArchivo(String nombre, List<String> contenido){
+        List<String> anterior = leerArchivo(nombre);
+        eliminarArchivo(nombre);
+        if (guardarArchivo(nombre, contenido)) return true;
+        guardarArchivo(nombre, anterior);
+        return false;
+    }
 
     public List<String> leerArchivo(String nombre){
         for(int i = 0; i < tamanoIndice; i++){
@@ -114,6 +134,69 @@ public class Disco {
         return false;
     }
     
+    // ======================= Memoria virtual =======================
+
+    // E: no aplica
+    // S: int - primera posición del disco que pertenece a la memoria virtual
+    // R: ninguna
+    public int getInicioVirtual(){
+        return tamanoTotal - tamanoMemoriaVirtual;
+    }
+
+    // E: no aplica
+    // S: int - posiciones de memoria virtual ocupadas en este momento
+    // R: ninguna
+    public int virtualUsada(){
+        int usadas = 0;
+        for(int i = getInicioVirtual(); i < tamanoTotal; i++){
+            if(!datos[i].isEmpty()) usadas++;
+        }
+        return usadas;
+    }
+
+    // E: cantidad (int) - posiciones contiguas que se necesitan en la memoria virtual
+    // S: int - dirección del disco donde empieza el bloque libre, o -1 si no hay espacio
+    // R: ninguna
+    public int buscarEspacioVirtual(int cantidad){
+        if(cantidad <= 0) return -1;
+        int contador = 0;
+        for(int i = getInicioVirtual(); i < tamanoTotal; i++){
+            if(datos[i].isEmpty()){
+                contador++;
+                if(contador == cantidad) return i - cantidad + 1;
+            } else {
+                contador = 0;
+            }
+        }
+        return -1;
+    }
+
+    // E: direccion (int) - inicio del bloque en memoria virtual; lineas (List<String>) - contenido
+    // S: no aplica (void)
+    // R: el bloque debe haberse obtenido con buscarEspacioVirtual
+    public void escribirVirtual(int direccion, List<String> lineas){
+        for(int i = 0; i < lineas.size(); i++){
+            datos[direccion + i] = lineas.get(i);
+        }
+    }
+
+    // E: direccion (int), cantidad (int) - bloque de memoria virtual a liberar
+    // S: no aplica (void)
+    // R: ninguna
+    public void liberarVirtual(int direccion, int cantidad){
+        for(int i = direccion; i < direccion + cantidad && i < tamanoTotal; i++){
+            if(i >= getInicioVirtual()) datos[i] = "";
+        }
+    }
+
+    public String leer(int posicion){
+        return datos[posicion];
+    }
+
+    public int getTamanoIndice(){
+        return tamanoIndice;
+    }
+
     public String[] getTodasLasPosiciones(){
         return datos;
     }
@@ -148,5 +231,4 @@ public class Disco {
     System.out.println("Borrado: " + borrado);
     System.out.println("Existe después: " + disco.existeArchivo("programa1.asm"));
 }
-}
-
+}

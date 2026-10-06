@@ -12,12 +12,13 @@ package minipc.util;
 public class ConversorBinario {
 
     /**
-     * Valida si un texto es uno de los registros válidos (AX, BX, CX, DX).
+     * Valida si un texto es uno de los registros válidos (AX, BX, CX, DX, AH, AL).
      */
     public static boolean esRegistroValido(String reg){
         if(reg == null) return false;
         return reg.equals("AX") || reg.equals("BX")
-            || reg.equals("CX") || reg.equals("DX");
+            || reg.equals("CX") || reg.equals("DX")
+            || reg.equals("AH") || reg.equals("AL");     // AH y AL se usan con INT 21H
     }
 
     /**
@@ -34,4 +35,4 @@ public class ConversorBinario {
 
     public static void main(String[] args){
     }
-}
+}

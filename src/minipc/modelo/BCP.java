@@ -40,6 +40,17 @@ public class BCP {
     private int direccionBase;
     private int tamanioProceso;
     private int prioridad;
+    private boolean flagGuardado;
+    private int tiempoFin;
+    private int direccionBCP;
+    private int enRAM;            // instrucciones cargadas en memoria principal
+    private int baseVirtual;      // dirección del disco donde está el resto (-1 si todo cabe en RAM)
+    private boolean avisoVirtual; // ya se avisó en pantalla que leyó de memoria virtual
+    private int ahGuardado;            // registro AH (función de INT 21H)
+    private int alGuardado;            // registro AL (dato que se lee/escribe con INT 21H)
+    private String dxTextoGuardado;    // nombre de archivo guardado en DX (MOV DX, "archivo.txt")
+    private int desplazamientoPC;      // posición del PC dentro del programa al suspenderse (-1 si no)
+    private java.util.Map<String, Integer> punterosLectura;   // próxima línea a leer de cada archivo abierto
             
         // E: idProceso (int) - identificador del proceso; estado (String) 
         // S: no aplica (constructor)
@@ -56,7 +67,18 @@ public class BCP {
             this.irGuardado = "";
             this.pila = new int[5]; 
             this.topePila = -1;
-            this.tiempoInicio = 0;
+            this.tiempoInicio = -1;
+            this.tiempoFin = -1;
+            this.flagGuardado = false;
+            this.direccionBCP = -1;
+            this.enRAM = 0;
+            this.baseVirtual = -1;
+            this.avisoVirtual = false;
+            this.ahGuardado = 0;
+            this.alGuardado = 0;
+            this.dxTextoGuardado = null;
+            this.desplazamientoPC = -1;
+            this.punterosLectura = new java.util.HashMap<>();
             this.tiempoEmpleado = 0;
             this.cpuId = -1;
             this.archivosAbiertos = new ArrayList<>();
@@ -77,7 +99,10 @@ public class BCP {
             this.cxGuardado = cpu.getCX();
             this.dxGuardado = cpu.getDX();
             this.irGuardado = cpu.getIR();
-            this.irGuardado = cpu.getIR();   
+            this.flagGuardado = cpu.isFlagIgual();
+            this.ahGuardado = cpu.getAH();
+            this.alGuardado = cpu.getAL();
+            this.dxTextoGuardado = cpu.getDXTexto();
         }
         
         public void restaurarEstado(CPU cpu){
@@ -88,6 +113,10 @@ public class BCP {
             cpu.setCX(this.cxGuardado);
             cpu.setDX(this.dxGuardado);
             cpu.setIR(this.irGuardado);
+            cpu.setFlagIgual(this.flagGuardado);
+            cpu.setAH(this.ahGuardado);
+            cpu.setAL(this.alGuardado);
+            cpu.setDXTexto(this.dxTextoGuardado);
         }
         
         public void setEstado(String nuevoEstado){
@@ -242,4 +271,87 @@ public class BCP {
             return topePila;
         }
         
+
+        public int getTiempoFin(){ return tiempoFin; }
+        public void setTiempoFin(int t){ this.tiempoFin = t; }
+
+        // Posición de la zona del S.O. donde está guardado este BCP (-1 si no está en memoria)
+        public int getDireccionBCP(){ return direccionBCP; }
+        public void setDireccionBCP(int dir){ this.direccionBCP = dir; }
+
+        // E: no aplica
+        // S: String - contenido de la pila, del fondo al tope, p. ej. "[1,2,3]"
+        // R: ninguna
+        public String pilaTexto(){
+            StringBuilder sb = new StringBuilder("[");
+            for(int i = 0; i <= topePila; i++){
+                if(i > 0) sb.append(",");
+                sb.append(pila[i]);
+            }
+            return sb.append("]").toString();
+        }
+
+        // E: no aplica
+        // S: String - el BCP serializado en una línea, tal como se guarda en la memoria del S.O.
+        //    "Sig" es la DIRECCIÓN de memoria del siguiente BCP en su cola (-1 si es el último)
+        // R: ninguna
+        public String aTextoMemoria(){
+            int sig = (siguiente != null) ? siguiente.getDireccionBCP() : -1;
+            return "BCP" + idProceso + "|" + estado
+                + "|PC=" + pcGuardado + "|AC=" + acGuardado
+                + "|AX=" + axGuardado + "|BX=" + bxGuardado
+                + "|CX=" + cxGuardado + "|DX=" + (dxTextoGuardado != null ? "\"" + dxTextoGuardado + "\"" : dxGuardado)
+                + "|AH=" + ahGuardado + "|AL=" + alGuardado
+                + "|IR=" + irGuardado + "|Pila=" + pilaTexto()
+                + "|Base=" + direccionBase + "|Alcance=" + tamanioProceso
+                + "|RAM=" + enRAM + "|Virtual=" + (usaMemoriaVirtual() ? baseVirtual + "+" + getEnVirtual() : "no")
+                + "|Sig=" + sig;
+        }
+
+        // ---- Memoria virtual ----
+        public int getEnRAM(){ return enRAM; }
+        public void setEnRAM(int n){ this.enRAM = n; }
+        public int getBaseVirtual(){ return baseVirtual; }
+        public void setBaseVirtual(int dir){ this.baseVirtual = dir; }
+        public boolean isAvisoVirtual(){ return avisoVirtual; }
+        public void setAvisoVirtual(boolean a){ this.avisoVirtual = a; }
+
+        // Instrucciones que no cupieron en RAM y están en la memoria virtual del disco
+        public int getEnVirtual(){ return tamanioProceso - enRAM; }
+        public boolean usaMemoriaVirtual(){ return baseVirtual >= 0 && getEnVirtual() > 0; }
+
+        // ---- INT 21H y suspensión ----
+        public int getAhGuardado(){ return ahGuardado; }
+        public int getAlGuardado(){ return alGuardado; }
+        public String getDxTextoGuardado(){ return dxTextoGuardado; }
+        public void setDxTextoGuardado(String t){ this.dxTextoGuardado = t; }
+        public int getDesplazamientoPC(){ return desplazamientoPC; }
+        public void setDesplazamientoPC(int d){ this.desplazamientoPC = d; }
+
+        // E: archivo (String) - nombre del archivo
+        // S: boolean - true si el proceso tiene ese archivo abierto
+        // R: el primer archivo de la lista es el propio programa (.asm), no cuenta como abierto por INT 21H
+        public boolean tieneAbierto(String archivo){
+            return archivosAbiertos.indexOf(archivo) > 0;
+        }
+
+        // Abre (o reabre) un archivo para INT 21H: lo agrega a la lista y reinicia su lectura
+        public void abrirArchivo(String archivo){
+            if (!tieneAbierto(archivo)) archivosAbiertos.add(archivo);
+            punterosLectura.put(archivo, 0);
+        }
+
+        public void cerrarArchivo(String archivo){
+            int i = archivosAbiertos.indexOf(archivo);
+            if (i > 0) archivosAbiertos.remove(i);
+            punterosLectura.remove(archivo);
+        }
+
+        public int getPunteroLectura(String archivo){
+            return punterosLectura.getOrDefault(archivo, 0);
+        }
+
+        public void setPunteroLectura(String archivo, int p){
+            punterosLectura.put(archivo, p);
+        }
 }

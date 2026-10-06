@@ -1,111 +1,58 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package minipc.modelo;
 
 /**
  *
  * @author Poll Anthony Garro Vargas - 2024129001
  * @Universidad: Instituto Tecnológico de Costa Rica
- * 
+ *
  */
+
+import java.util.Set;
 
 /**
- * TipoOPeracion: convierte entre el texto de una operación del lenguaje
- * ensamblador (LOAD, STORE, MOV, SUB, ADD) y su código binario de 4 bits,
- * y viceversa.
+ * TipoOperacion: define las operaciones e interrupciones válidas del
+ * lenguaje ensamblador del Mini PC. La usa el ParserASM para validar
+ * cada línea del archivo .asm.
  */
 public class TipoOperacion {
-    
-    // E: Type (String) - nombre de la operación, como "LOAD", "MOV"
-    // S: String - código binario de 4 bits de la operación, o null si no es válida
-    // R: Type debe ser exactamente una de las 5 operaciones existentes
-    public static String Tipo(String Type){
-        String Dato = "";
-        
-        if(Type.equals("LOAD")){
-            Dato = "0001";
-        }else if(Type.equals("STORE")){
-            Dato = "0010";
-        }else if(Type.equals("MOV")){
-            Dato = "0011";
-        }else if(Type.equals("SUB")){
-            Dato = "0100";
-        }else if(Type.equals("ADD")){
-            Dato = "0101";
-        }else if(Type.equals("INC")){
-            Dato = "0110"; 
-        }else if(Type.equals("DEC")){
-            Dato = "0111"; 
-        }else if(Type.equals("PUSH")){
-            Dato = "1110"; 
-        }else if(Type.equals("POP")){
-            Dato = "1111"; 
-        }else if(Type.equals("JMP")){
-            Dato = "1001";
-        }else if(Type.equals("CMP")){
-            Dato = "1010"; 
-        }else if(Type.equals("JE")){
-            Dato = "1011"; 
-        }else if(Type.equals("JNE")){
-            Dato = "1100"; 
-        }else if(Type.equals("SWAP")){
-            Dato = "1000"; 
-        }else if(Type.equals("PARAM")){
-            Dato = "1101"; 
-        }else if(Type.equals("INT")){
-            Dato = "0000"; 
-        }else{
-            Dato = null;
-        }
-        return Dato;
-    }
-    
-    // E: binario (String) - código binario de 4 bits de una operación
-    // S: String - nombre de la operación, o null si el código no es válido
-    // R: binario debe ser uno de los 5 códigos válidos definidos
-    public static String BinarioATipo(String binario){
-        String Dato = "";
-        if(binario.equals("0001")){
-            Dato = "LOAD";
-        }else if(binario.equals("0010")){
-            Dato = "STORE";
-        }else if(binario.equals("0011")){
-            Dato = "MOV";
-        }else if(binario.equals("0100")){
-            Dato = "SUB";
-        }else if(binario.equals("0101")){
-            Dato = "ADD";
-        }else if(binario.equals("0110")){
-            Dato = "INC"; 
-        }else if(binario.equals("0111")){
-            Dato = "DEC"; 
-        }else if(binario.equals("1110")){
-            Dato = "PUSH"; 
-        }else if(binario.equals("1111")){
-            Dato = "POP";  
-        }else if(binario.equals("1001")){
-            Dato = "JMP";
-         }else if(binario.equals("1010")){
-             Dato = "CMP"; 
-         }else if(binario.equals("1011")){
-             Dato = "JE"; 
-         }else if(binario.equals("1100")){
-             Dato = "JNE"; 
-         }else if(binario.equals("1000")){
-             Dato = "SWAP"; 
-         }else if(binario.equals("1101")){
-             Dato = "PARAM"; 
-         }else if(binario.equals("0000")){
-             Dato = "INT"; 
-         }else{
-            Dato = null;
-        }
-        return Dato;
-    }
-    public static void main(String[] arg){
 
+    private static final Set<String> OPERACIONES = Set.of(
+        "LOAD",
+        "STORE",
+        "MOV", 
+        "ADD", 
+        "SUB", 
+        "INC", 
+        "DEC", 
+        "SWAP",
+        "INT", 
+        "JMP", 
+        "CMP", 
+        "JE", 
+        "JNE", 
+        "PARAM", 
+        "PUSH", 
+        "POP"
+    );
 
+    private static final Set<String> INTERRUPCIONES = Set.of(
+        "20H", 
+        "10H", 
+        "09H", 
+        "21H"
+    );
+
+    // E: operacion (String) - nombre de la operación, como "LOAD" o "MOV"
+    // S: boolean - true si la operación existe en el lenguaje
+    // R: ninguna (null devuelve false)
+    public static boolean esOperacionValida(String operacion){
+        return operacion != null && OPERACIONES.contains(operacion.toUpperCase());
+    }
+
+    // E: codigo (String) - código de interrupción, como "20H"
+    // S: boolean - true si la interrupción existe
+    // R: ninguna (null devuelve false)
+    public static boolean esInterrupcionValida(String codigo){
+        return codigo != null && INTERRUPCIONES.contains(codigo.toUpperCase());
     }
 }
