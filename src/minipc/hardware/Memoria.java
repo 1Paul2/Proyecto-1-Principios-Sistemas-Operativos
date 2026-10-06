@@ -18,10 +18,12 @@ package minipc.hardware;
  * Operativo (desde 0 hasta inicioUsuario-1) y zona de Usuario (desde
  * inicioUsuario hasta tamanoTotal-1).
  */
+// Recompilado: se elimino la copia duplicada "Memoria - copia.java"
 public class Memoria {
         private String[] datos;
         private int inicioUsuario;
         private int tamanoTotal;
+        private boolean[] ocupado;
         
         // E: tamanoTotal (int) - cantidad total de posiciones de memoria; tamanoSistema (int) - cantidad de posiciones reservadas para el S.O.
         // S: no aplica (constructor)
@@ -32,15 +34,18 @@ public class Memoria {
                 this.datos = new String[tamanoTotal];
                 for(int x = 0; x < datos.length; x++){
                     datos[x] = "00000000";
-            }
+            }   
+                this.ocupado = new boolean[tamanoTotal];
                 
         }
+        
         
         // E: posicion (int) - indice de memoria a escribir; valorBinario (String) - dato a guardar
         // S: no aplica (void)
         // R: posicion debe estar entre 0 y tamanoTotal-1
         public void escribir(int posicion, String valorBinario){
             datos[posicion] = valorBinario;
+            ocupado[posicion] = true;
         }
 
         // E: posicion (int) - indice de memoria a leer
@@ -57,6 +62,20 @@ public class Memoria {
             return posicion >= inicioUsuario && posicion < tamanoTotal;
         }
 
+
+        public boolean accesoPermitido(int posicion, int base, int alcance){
+            return posicion >= base && posicion < (base + alcance);
+        }
+
+        // E: posicion (int), base (int), alcance (int) - igual que accesoPermitido
+        // S: no aplica (void)
+        // R: lanza RuntimeException si el acceso está fuera del rango permitido
+        public void validarAcceso(int posicion, int base, int alcance){
+            if(!accesoPermitido(posicion, base, alcance)){
+                throw new RuntimeException("Violación de acceso a memoria: el proceso (base=" + base + ", alcance=" + alcance + ") intentó acceder a la posición " + posicion + ", fuera de su espacio asignado.");
+            }
+        }
+
         public int getInicioUsuario(){
             return inicioUsuario;
         }
@@ -69,7 +88,44 @@ public class Memoria {
             return tamanoTotal;
         }
         
-        public static void main(String[] args){
-
+        public void liberar(int base, int tamanio) {
+            for (int x = base; x < (base + tamanio); x++) {
+                ocupado[x] = false;
+                datos[x] = "00000000";
+            }
         }
+        
+        public int encontrarHueco(int tamanio) {
+            int contador = 0;
+            for (int x = inicioUsuario; x < tamanoTotal; x++) {
+                if (ocupado[x] == false) {
+                    contador++;
+                    if (contador == tamanio) {
+                        return x - tamanio + 1;
+                    }
+                } else {
+                    contador = 0;
+                }
+            }
+            return -1;
+        }
+
+
+        // E: no aplica
+        // S: int[] - {inicio, tamaño} del bloque libre más grande de la zona de usuario ({-1, 0} si no hay)
+        // R: ninguna
+        public int[] huecoMasGrande() {
+            int mejorInicio = -1, mejorTam = 0, inicio = -1, tam = 0;
+            for (int x = inicioUsuario; x < tamanoTotal; x++) {
+                if (!ocupado[x]) {
+                    if (tam == 0) inicio = x;
+                    tam++;
+                    if (tam > mejorTam) { mejorTam = tam; mejorInicio = inicio; }
+                } else {
+                    tam = 0;
+                }
+            }
+            return new int[]{mejorInicio, mejorTam};
+        }
+
 }

@@ -1,69 +1,69 @@
 package minipc.modelo;
+
 /**
  *
  * @author Poll Anthony Garro Vargas - 2024129001
  * @Universidad: Instituto Tecnológico de Costa Rica
- * 
+ *
  */
-import minipc.util.ConversorBinario;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Instruccion: representa una linea del programa .asm ya procesada, con su
- * operacion, registro, valor y los codigos binarios correspondientes,
- * lista para guardarse en memoria y mostrarse en la interfaz.
+ * Instruccion: representa una línea del programa .asm ya validada, con su
+ * operación y de 0 a 3 operandos guardados como texto. Así el mismo campo
+ * sirve para registros ("AX"), números ("5", "-2") o interrupciones ("20H").
+ *
+ * Ejemplos de texto en memoria:
+ *   "MOV BX AX", "MOV BX 5", "INC", "PARAM 1 2 3", "INT 20H"
  */
 public class Instruccion {
-    private String operacion;        
-    private String registro;        
-    private Integer valor;           
-    private String codigoBinarioOperacion;  
-    private String codigoBinarioValor;      
-    
-    // E: operacion (String) - ej. "MOV", "LOAD"; registro (String) valor (Integer) - puede ser null si la operacion no lleva valor numerico
+    private String operacion;
+    private String[] operandos;
+
+    // E: operacion (String); operandos (String...) - de 0 a 3 operandos
     // S: no aplica (constructor)
-    // R: operacion y registro deben ser validos segun TipoOPeracion y ConversorBinario
-    public Instruccion(String operacion, String registro, Integer valor){
+    // R: los operandos null o vacíos se ignoran
+    public Instruccion(String operacion, String... operandos){
         this.operacion = operacion;
-        this.registro = registro;
-        this.valor = valor;
-        
-        this.codigoBinarioOperacion = TipoOPeracion.Tipo(operacion) + " " + ConversorBinario.RegistroBinario(registro);
-        
-        if(valor != null){
-            this.codigoBinarioValor = ConversorBinario.NumeroBinario(valor);
-        } else {
-            this.codigoBinarioValor = null;
+        List<String> limpios = new ArrayList<>();
+        if(operandos != null){
+            for(String op : operandos){
+                if(op != null && !op.isEmpty()){
+                    limpios.add(op);
+                }
+            }
         }
+        this.operandos = limpios.toArray(new String[0]);
     }
-    
-    public String getoperacion(){
+
+    // Constructor anterior, se mantiene para no romper código viejo:
+    // new Instruccion("MOV", "AX", 5)  o  new Instruccion("INT", "20H", null)
+    public Instruccion(String operacion, String registro, Integer valor){
+        this(operacion, registro, valor == null ? null : String.valueOf(valor));
+    }
+
+    public String getOperacion(){
         return operacion;
     }
-    
-    public String getregistro(){
-        return registro;
+
+    public String[] getOperandos(){
+        return operandos.clone();
     }
-    
-    public Integer getvalor(){
-        return valor;
-    }
-    
-    public String getcodigoBinarioOperacion(){
-        return codigoBinarioOperacion;
-    }
-    
-    public String getcodigoBinarioValor(){
-        return codigoBinarioValor;
-    }
-    
+
     // E: no aplica
-    // S: String - el codigo binario completo de la instruccion (operacion+registro, mas el valor si existe), listo para guardarse en una sola posicion de memoria
+    // S: String - la instrucción como texto, separada por espacios, lista para memoria y disco
     // R: ninguna
-    public String getCodigoBinarioCompleto(){
-        if(codigoBinarioValor != null){
-            return codigoBinarioOperacion + " " + codigoBinarioValor;
-        } else {
-            return codigoBinarioOperacion;
+    public String getTextoCompleto(){
+        if(operandos.length == 0){
+            return operacion;
         }
+        return operacion + " " + String.join(" ", operandos);
+    }
+
+    @Override
+    public String toString(){
+        return getTextoCompleto();
     }
 }
