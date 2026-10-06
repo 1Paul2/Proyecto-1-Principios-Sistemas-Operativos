@@ -322,7 +322,7 @@ public class CPU {
     // Se valida antes de meter el primero: si no caben todos, no se mete ninguno
     private void ejecutarPARAM(String[] p){
         int cantidad = p.length - 1;
-        int libres = 4 - bcpActual.getTopePila();          // la pila tiene 5 posiciones (0 a 4)
+        int libres = 4 - bcpActual.getTopePila();          // la pila tiene 5 posiciones
         if (cantidad > libres) {
             throw new RuntimeException("Desbordamiento de pila en el proceso " + bcpActual.getIdProceso()
                 + ": PARAM necesita " + cantidad + " espacios y solo quedan " + libres);
@@ -349,7 +349,7 @@ public class CPU {
 
     // ===== INT 21H: manejo de archivos =====
     // DX = nombre del archivo (MOV DX, "datos.txt"); AH = función; AL = dato leído/escrito.
-    //   AH = 3CH crear archivo (queda abierto)   AH = 3DH abrir archivo
+    //   AH = 3CH crear archivo queda abierto   AH = 3DH abrir archivo
     //   AH = 4DH leer siguiente valor -> AL      AH = 40H escribir AL al final del archivo
     //   AH = 41H eliminar archivo
     // Protección: los programas .asm no se pueden modificar ni eliminar con INT 21H.
@@ -446,4 +446,4 @@ public class CPU {
             default: throw new RuntimeException("Interrupción inválida: " + codigo);
         }
     }
-}
+}

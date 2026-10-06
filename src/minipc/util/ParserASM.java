@@ -33,10 +33,6 @@ public class ParserASM {
     // S: Instruccion - la instrucción validada
     // R: lanza IllegalArgumentException con el motivo si la línea no es válida
     public static Instruccion procesarLinea(String linea){
-        // ---- Formato estricto: OPERACION op1, op2, op3 ----
-        // - La operación va separada de los operandos por espacio(s).
-        // - Los operandos se separan con UNA sola coma (los espacios alrededor son opcionales).
-        // - No se permiten comas al inicio o al final, comas repetidas ni operandos sin coma.
         String codigo = linea.trim();
         java.util.regex.Matcher m = java.util.regex.Pattern.compile("^(\\S+)(?:\\s+(.*))?$").matcher(codigo);
         if (!m.matches()) {
@@ -75,7 +71,7 @@ public class ParserASM {
                         + "\" (los operandos se separan con una coma, por ejemplo: MOV AX, 5)");
                 }
                 if (op.startsWith("\"")) {
-                    // Texto entre comillas (nombre de archivo): se respeta tal cual, sin mayúsculas
+      
                     if (!op.matches("\"[A-Za-z0-9_.\\-]+\"")) {
                         throw new IllegalArgumentException("el texto " + op
                             + " no es válido (use comillas y solo letras, números, punto, guion o guion bajo, sin espacios)");
@@ -275,4 +271,4 @@ public class ParserASM {
         }
         return instrucciones;
     }
-}
+}

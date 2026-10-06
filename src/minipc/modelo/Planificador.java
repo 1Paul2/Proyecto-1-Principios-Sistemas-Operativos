@@ -12,18 +12,6 @@ import minipc.hardware.Disco;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Planificador: administra la Lista de Trabajos (programas en disco esperando
- * memoria) y la Lista de Procesos (procesos en memoria). Cumple dos roles:
- *  - Planificador de trabajos (largo plazo): prepararSiguientes() pasa
- *    programas del disco a memoria cuando hay espacio.
- *    Si un programa no cabe completo en RAM, la parte que sobra se carga en la
- *    memoria virtual del disco.
- *    Si un proceso bloqueado por teclado impide que entre otro, se suspende
- *    (sale de memoria) y se recarga cuando recibe su valor.
- *  - Planificador de CPU (corto plazo, FCFS): siguienteProceso() entrega el
- *    primer proceso preparado al despachador.
- */
 public class Planificador {
 
     // Colas

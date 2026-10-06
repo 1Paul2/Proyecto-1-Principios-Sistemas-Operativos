@@ -29,6 +29,7 @@ public class GestorProcesos {
     private Planificador planificador;
     private Despachador despachador;
     private int siguienteIdProceso;
+    private BCP procesoEsperandoTeclado;  // proceso detenido en INT 09H (sigue en la CPU)
 
     private List<BCP> todosLosProcesos;   // todos los procesos creados, en orden de llegada
     private int reloj;                    // segundos simulados transcurridos
@@ -109,6 +110,15 @@ public class GestorProcesos {
     // S: boolean - true si se ejecutó un segundo de CPU; false si no había nada que ejecutar
     // R: 1 llamada = 1 segundo de CPU
     public boolean ejecutarUnPaso(){
+        // INT 09H: la CPU queda detenida en ese proceso hasta que el usuario ingrese el valor.
+        // No se ejecuta ninguna instrucción, pero el tiempo sigue corriendo: cada segundo
+        // que el proceso pasa esperando se suma al reloj y a su tiempo empleado.
+        if (procesoEsperandoTeclado != null) {
+            reloj++;
+            procesoEsperandoTeclado.setTiempoEmpleado(procesoEsperandoTeclado.getTiempoEmpleado() + 1);
+            actualizarBCPsEnMemoria();
+            return true;
+        }
         if (cpu.getBcpActual() == null) {
             despacharSiguiente();
         }
@@ -133,10 +143,10 @@ public class GestorProcesos {
         }
 
         if (cpu.consumirSolicitudTeclado()) {
-            // INT 09H: cambio de contexto, el proceso queda bloqueado esperando teclado
-            despachador.capturar(actual);
-            planificador.enEspera(actual);
-            cpu.setBcpActual(null);
+            // INT 09H: el proceso NO sale de la CPU. Queda "En espera" en la misma
+            // instrucción y la ejecución se detiene hasta que se ingrese el número.
+            actual.setEstado("En espera");
+            procesoEsperandoTeclado = actual;
             cpu.imprimir(">> P" + actual.getIdProceso() + " - Ingresar valor (0-255):");
         } else if (cpu.programaTerminado()) {
             finalizar(actual);
@@ -155,6 +165,7 @@ public class GestorProcesos {
     public void ejecutarTodo(){
         int segundos = 0;
         while (hayProcesos() && segundos < MAX_SEGUNDOS_AUTOMATICO) {
+            if (esperandoTeclado()) break;      // se detiene hasta que el usuario ingrese el valor
             if (!ejecutarUnPaso()) break;
             segundos++;
         }
@@ -170,20 +181,15 @@ public class GestorProcesos {
         if (valor < 0 || valor > 255) {
             throw new IllegalArgumentException("Solo se aceptan números entre 0 y 255");
         }
-        BCP bcp = planificador.getListaEspera().getPrimero();
+        BCP bcp = procesoEsperandoTeclado;
         if (bcp == null) {
             throw new IllegalStateException("Ningún proceso está esperando entrada de teclado");
         }
-        bcp.setDxGuardado(valor);           // INT 09H guarda el valor en DX
-        bcp.setDxTextoGuardado(null);
-        planificador.salirDeEspera();       // vuelve a preparados o a la lista de trabajos si estaba suspendido
+        cpu.setDX(valor);                   // INT 09H guarda el valor en DX
+        cpu.setDXTexto(null);
+        bcp.setEstado("Ejecución");         // sigue normal con la siguiente instrucción
+        procesoEsperandoTeclado = null;
         cpu.imprimir(String.valueOf(valor));
-
-        planificador.prepararSiguientes(enEjecucion());
-        mostrarMensajesSO();
-        if (cpu.getBcpActual() == null) {
-            despacharSiguiente();
-        }
         actualizarBCPsEnMemoria();
     }
 
@@ -249,13 +255,17 @@ public class GestorProcesos {
     }
 
     public boolean esperandoTeclado(){
-        return !planificador.getListaEspera().estaVacia();
+        return procesoEsperandoTeclado != null;
+    }
+
+    // Proceso que ejecutó INT 09H y espera el número (o null)
+    public BCP getProcesoEsperandoTeclado(){
+        return procesoEsperandoTeclado;
     }
 
     // Solo quedan procesos bloqueados por teclado: la ejecución no puede avanzar
     public boolean bloqueadoPorTeclado(){
-        return esperandoTeclado() && cpu.getBcpActual() == null
-            && planificador.getListaProcesos().estaVacia();
+        return esperandoTeclado();
     }
 
     public List<BCP> getTodosLosProcesos(){

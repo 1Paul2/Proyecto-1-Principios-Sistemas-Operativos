@@ -4,11 +4,6 @@
  */
 package minipc.util;
 
-/**
- * ConversorBinario: utilidades para validar registros y convertir valores
- * hexadecimales. Ya no se usa para convertir a binario porque el sistema
- * ahora trabaja con texto plano en memoria.
- */
 public class ConversorBinario {
 
     /**

@@ -56,6 +56,9 @@ public class VentanaPrincipal extends JFrame {
 
     // Ejecución automática
     private final Timer timerAuto;
+    // En Siguiente: mientras un proceso espera el teclado (INT 09H), el reloj
+    // avanza solo cada segundo real hasta que se ingrese el valor
+    private final Timer timerEspera;
     private boolean modoAutomatico = false;
 
     // ---- Encabezado y barra de herramientas ----
@@ -77,7 +80,7 @@ public class VentanaPrincipal extends JFrame {
     private MapaMemoria mapaMemoria;
     private DefaultTableModel modeloMemoria;
     private JTable tablaMemoria;
-    private String[] duenoPosicion = new String[0];   // "S.O.", "P1", ... o "" por posición
+    private String[] duenoPosicion = new String[0];   // "S.O.", "P1"  por posición
     private int posicionPC = -1;
     private int posicionPCVirtual = -1;   // posición del disco del PC si ejecuta desde memoria virtual
 
@@ -106,7 +109,7 @@ public class VentanaPrincipal extends JFrame {
     private JLabel lblTeclado;
 
     // E: no aplica
-    // S: no aplica (constructor)
+    // S: no aplica constructor
     // R: arma la ventana completa con la configuración de config.txt
     public VentanaPrincipal(){
         super("Mini PC · Gestor de Procesos");
@@ -122,6 +125,7 @@ public class VentanaPrincipal extends JFrame {
         add(crearCuerpo(), BorderLayout.CENTER);
 
         timerAuto = new Timer(400, e -> pasoAutomatico());
+        timerEspera = new Timer(1000, e -> segundoDeEspera());
 
         setMinimumSize(new Dimension(1280, 780));
         setSize(new Dimension(1500, 900));
@@ -131,7 +135,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
 
-    //                              ENCABEZADO
+    //ENCABEZADO
 
 
     private JPanel crearEncabezado(){
@@ -186,7 +190,7 @@ public class VentanaPrincipal extends JFrame {
 
         btnCargar       = new Boton("Cargar archivos", Tema.VERDE_OSCURO);
         btnEjecutar     = new Boton("Ejecutar", Tema.VERDE);
-        btnPaso         = new Boton("Paso a paso", Tema.AZUL);
+        btnPaso         = new Boton("Siguiente", Tema.AZUL);
         btnDetener      = new Boton("Detener", Tema.ROJO);
         btnLimpiar      = new Boton("Limpiar", Tema.GRIS);
         btnEstadisticas = new Boton("Estadísticas", Tema.MORADO);
@@ -211,9 +215,9 @@ public class VentanaPrincipal extends JFrame {
         lblVel.setFont(Tema.NORMAL);
         lblVel.setForeground(Tema.TEXTO_SUAVE);
         // Por defecto, "Ejecutar" avanza 1 segundo de CPU por cada segundo real,
-        // igual que presionar "Paso a paso" una vez por segundo.
-        // Las otras opciones solo aceleran la simulación para pruebas largas.
-        cmbVelocidad = new JComboBox<>(new String[]{"1 s real por paso", "x3 (prueba)", "x12 (prueba)", "Instantánea"});
+        // igual que presionar "Siguiente" una vez por segundo.
+        // "Instantánea" corre todo de una vez.
+        cmbVelocidad = new JComboBox<>(new String[]{"1 segundo", "Instantánea"});
         cmbVelocidad.setSelectedIndex(0);
         cmbVelocidad.setFont(Tema.NORMAL);
         cmbVelocidad.addActionListener(e -> timerAuto.setDelay(retardoSeleccionado()));
@@ -576,7 +580,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
     // E: no aplica
-    // S: no aplica (void)
+    // S: no aplica 
     // R: carga uno o varios .asm; los inválidos se reportan con su línea y motivo
     private void cargarArchivos(){
         JFileChooser selector = new JFileChooser(new File("."));
@@ -616,22 +620,42 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 
-    // Botón "Paso a paso": 1 segundo de CPU
+    // Botón "Siguiente": 1 segundo de CPU
     private void pasoManual(){
         if (!validarHayProcesos()) return;
-        if (!gestor.ejecutarUnPaso()) {
-            if (gestor.bloqueadoPorTeclado()) {
-                avisar("Los procesos están esperando un valor de teclado.\nIngresalo en la Pantalla.");
-            }
+        if (gestor.esperandoTeclado()) {
+            // El tiempo ya corre solo; no se suman segundos extra con clics
+            avisar("El proceso está esperando un valor de teclado.\nIngreselo en la Pantalla y presione Enter.");
+            return;
         }
+        gestor.ejecutarUnPaso();
         actualizarVista();
-        if (!gestor.hayProcesos()) finEjecucion();
+        if (gestor.esperandoTeclado()) {
+            iniciarEsperaTeclado();
+        } else if (!gestor.hayProcesos()) {
+            finEjecucion();
+        }
+    }
+
+    // Arranca el conteo automático de segundos mientras se espera el teclado (modo Siguiente)
+    private void iniciarEsperaTeclado(){
+        if (!modoAutomatico && !timerEspera.isRunning()) timerEspera.start();
+    }
+
+    // Cada segundo real de espera: suma 1 s al reloj y al tiempo del proceso detenido en INT 09H
+    private void segundoDeEspera(){
+        if (gestor == null || !gestor.esperandoTeclado() || modoAutomatico) {
+            timerEspera.stop();
+            return;
+        }
+        gestor.ejecutarUnPaso();
+        actualizarVista();
     }
 
     // Botón "Ejecutar": modo automático
     private void iniciarAutomatico(){
         if (!validarHayProcesos()) return;
-        if (cmbVelocidad.getSelectedIndex() == 3) {          // instantánea
+        if (cmbVelocidad.getSelectedIndex() == 1) {          // instantánea
             gestor.ejecutarTodo();
             actualizarVista();
             if (gestor.bloqueadoPorTeclado()) {
@@ -642,6 +666,7 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         modoAutomatico = true;
+        timerEspera.stop();                 // en automático el timer principal cuenta la espera
         timerAuto.setDelay(retardoSeleccionado());
         timerAuto.start();
         actualizarBotones();
@@ -669,11 +694,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private int retardoSeleccionado(){
-        switch (cmbVelocidad.getSelectedIndex()) {
-            case 0:  return 1000;
-            case 2:  return 80;
-            default: return 350;
-        }
+        return 1000;
     }
 
     private void finEjecucion(){
@@ -690,6 +711,7 @@ public class VentanaPrincipal extends JFrame {
         String texto = txtTeclado.getText().trim();
         try {
             gestor.ingresarTeclado(Integer.parseInt(texto));
+            timerEspera.stop();             // ya llegó el valor: el reloj deja de correr solo
             txtTeclado.setText("");
             if (modoAutomatico && !timerAuto.isRunning()) timerAuto.start();
         } catch (NumberFormatException e) {
@@ -716,13 +738,23 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 
+    // E: no aplica
+    // S: no aplica (void)
+    // R: siempre pide confirmación antes de borrar procesos, memoria, disco, pantalla y estadísticas
     private void limpiar(){
-        if (gestor != null && gestor.hayProcesos()) {
-            int r = JOptionPane.showConfirmDialog(this, "Hay procesos sin terminar. ¿Limpiar todo de todas formas?",
-                "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (r != JOptionPane.YES_OPTION) return;
+        if (gestor == null) {
+            JOptionPane.showMessageDialog(this, "No hay nada que limpiar.", "Limpiar", JOptionPane.INFORMATION_MESSAGE);
+            return;
         }
+        String mensaje = gestor.hayProcesos()
+            ? "Hay procesos sin terminar.\n¿Está seguro de que quiere limpiar todo?"
+            : "¿Está seguro de que quiere limpiar todo?";
+        int r = JOptionPane.showConfirmDialog(this,
+            mensaje + "\nSe borrarán los procesos, la memoria, el disco, la pantalla y las estadísticas.",
+            "Confirmar limpieza", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (r != JOptionPane.YES_OPTION) return;
         detenerAutomatico(false);
+        timerEspera.stop();
         gestor = null;
         txtTeclado.setText("");
         actualizarVista();
@@ -838,7 +870,7 @@ public class VentanaPrincipal extends JFrame {
         dispPantalla.setColores(gestor.getCpu().getPantalla().isEmpty() ? "Lista" : "Mostrando salida",
             Tema.VERDE_OSCURO, Tema.VERDE_CLARO);
 
-        BCP esperando = gestor.getPlanificador().getListaEspera().getPrimero();
+        BCP esperando = gestor.getProcesoEsperandoTeclado();
         if (esperando != null) dispTeclado.setColores("Esperando P" + esperando.getIdProceso(), Tema.AMBAR, Tema.AMBAR_CLARO);
         else dispTeclado.setColores("Libre", Tema.GRIS, Tema.GRIS_CLARO);
 
@@ -1033,7 +1065,7 @@ public class VentanaPrincipal extends JFrame {
         txtTeclado.setEnabled(esperando);
         btnEnviar.setEnabled(esperando);
         if (esperando) {
-            BCP b = gestor.getPlanificador().getListaEspera().getPrimero();
+            BCP b = gestor.getProcesoEsperandoTeclado();
             lblTeclado.setText(">> P" + b.getIdProceso() + " valor (0-255):");
             lblTeclado.setForeground(Tema.AMBAR);
             txtTeclado.setBackground(Tema.AMBAR_CLARO);
@@ -1131,10 +1163,29 @@ public class VentanaPrincipal extends JFrame {
         JTextField ms = campo(configuracion.getMemoriaSistema());
         JTextField as = campo(configuracion.getAlmacenamientoSecundario());
         JTextField mv = campo(configuracion.getMemoriaVirtual());
-        campos.add(etiqueta("Memoria principal"));          campos.add(mp);
-        campos.add(etiqueta("Zona del S.O. (BCP)"));        campos.add(ms);
-        campos.add(etiqueta("Almacenamiento secundario"));  campos.add(as);
-        campos.add(etiqueta("Memoria virtual"));            campos.add(mv);
+        // La zona del S.O. y la memoria virtual se calculan solas (no se editan)
+        for (JTextField calc : new JTextField[]{ms, mv}) {
+            calc.setEditable(false);
+            calc.setBackground(Tema.GRIS_CLARO);
+            calc.setForeground(Tema.TEXTO_SUAVE);
+        }
+        Runnable recalcular = () -> {
+            try { ms.setText(String.valueOf(ConfiguracionSistema.calcularZonaSO(Integer.parseInt(mp.getText().trim())))); }
+            catch (NumberFormatException ex) { ms.setText("-"); }
+            try { mv.setText(String.valueOf(ConfiguracionSistema.calcularMemoriaVirtual(Integer.parseInt(as.getText().trim())))); }
+            catch (NumberFormatException ex) { mv.setText("-"); }
+        };
+        javax.swing.event.DocumentListener alCambiar = new javax.swing.event.DocumentListener() {
+            @Override public void insertUpdate(javax.swing.event.DocumentEvent e){ recalcular.run(); }
+            @Override public void removeUpdate(javax.swing.event.DocumentEvent e){ recalcular.run(); }
+            @Override public void changedUpdate(javax.swing.event.DocumentEvent e){ recalcular.run(); }
+        };
+        mp.getDocument().addDocumentListener(alCambiar);
+        as.getDocument().addDocumentListener(alCambiar);
+        campos.add(etiqueta("Memoria principal"));               campos.add(mp);
+        campos.add(etiqueta("Zona del S.O. (25 %)"));            campos.add(ms);
+        campos.add(etiqueta("Almacenamiento secundario"));       campos.add(as);
+        campos.add(etiqueta("Memoria virtual (12,5 % disco)"));  campos.add(mv);
         t.getContenido().add(campos, BorderLayout.CENTER);
 
         Boton cargar = new Boton("Cargar archivo...", Tema.GRIS);
@@ -1158,12 +1209,11 @@ public class VentanaPrincipal extends JFrame {
 
         aplicar.addActionListener(e -> {
             try {
-                configuracion.setValores(
-                    Integer.parseInt(mp.getText().trim()), Integer.parseInt(ms.getText().trim()),
-                    Integer.parseInt(as.getText().trim()), Integer.parseInt(mv.getText().trim()));
+                configuracion.setTamanos(
+                    Integer.parseInt(mp.getText().trim()), Integer.parseInt(as.getText().trim()));
                 configuracion.guardarEnArchivo(new File(ConfiguracionSistema.ARCHIVO_POR_DEFECTO));
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(dlg, "Todos los valores deben ser números enteros.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dlg, "La memoria principal y el disco deben ser números enteros.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(dlg, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
