@@ -4,13 +4,6 @@
  */
 package minipc.util;
 
-/**
- *
- * @author Poll Anthony Garro Vargas - 2024129001
- * @Universidad: Instituto Tecnológico de Costa Rica
- * 
- */
-
 import minipc.modelo.Instruccion;
 import minipc.modelo.TipoOperacion;
 import java.io.File;
@@ -21,80 +14,150 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * ParserASM: se encarga de leer un archivo .asm de texto plano, validar que
- * cada línea tenga un formato correcto, y convertirlo en una lista de
- * Instruccion listas para cargar en memoria.
+ * ParserASM: lee un archivo .asm, valida cada línea y lo convierte en una
+ * lista de Instruccion listas para cargar en memoria.
  */
 public class ParserASM {
-        // E: linea (String) - una línea de texto del archivo .asm, como "MOV AX, 5"
-        // S: Instruccion si la línea es válida, o null si la operación/registro no existen
-        // R: lanza RuntimeException si el valor numérico no cabe en 8 bits (-127 a 127)
-        public static Instruccion procesarLinea(String linea){
-            String[] partes = linea.trim().split("[,\\s]+");
 
-            String operacion = partes[0];
-            String registro = partes[1];
+    /**
+     * Convierte una línea del .asm en una Instruccion.
+     * Devuelve null si la operación o el registro son inválidos.
+     */
+    public static Instruccion procesarLinea(String linea){
+        String[] partes = linea.trim().split("[,\\s]+");
+        String operacion = partes[0];
 
-            // validar que la operación exista
-            if(TipoOperacion.Tipo(operacion) == null){
-                return null; // línea inválida
-            }
-
-            // validar que el registro exista
-            if(ConversorBinario.RegistroBinario(registro) == null){
-                return null; // línea inválida
-            }
-
-            Integer valor = null;
-            if(partes.length == 3){
-                valor = Integer.parseInt(partes[2]);
-                    if(valor < -127 || valor > 127){
-                        throw new RuntimeException("El valor " + valor + " no cabe en 8 bits.\nDebe de ser entre -127 a 127 contando negativos.");
-                        
-                    }
-            }
-
-            return new Instruccion(operacion, registro, valor);
+        // Validar que la operación exista
+        if(TipoOperacion.Tipo(operacion) == null){
+            return null;
         }
-        
-        // E: archivo (File) - el archivo .asm seleccionado por el usuario
-        // S: List<Instruccion> - todas las instrucciones válidas leídas del archivo
-        // R: lanza IOException si el archivo no se puede abrir; lanza RuntimeException
-        //    si alguna línea tiene formato inválido, valor fuera de rango, o el archivo no parece ser texto plano
-        public static List<Instruccion> leerArchivo(File archivo) throws IOException {
-            List<Instruccion> instrucciones = new ArrayList<>();
 
-            BufferedReader lector = new BufferedReader(new FileReader(archivo));
-            String linea;
-            int numeroLinea = 0;
+        switch (operacion) {
 
-            while((linea = lector.readLine()) != null){
-                numeroLinea = numeroLinea + 1;
-
-                if(linea.length() > 200){
-                    lector.close();
-                    throw new RuntimeException("El archivo no parece ser un .asm de texto plano válido (línea " + numeroLinea + " es demasiado larga o contiene datos binarios)");
+            case "INC":
+            case "DEC": {
+                // "INC" o "INC AX"
+                if(partes.length == 1){
+                    return new Instruccion(operacion, null, null);
                 }
-
-                if(linea.trim().isEmpty()){
-                    continue;
-                }
-
-                Instruccion instr = procesarLinea(linea);
-
-                if(instr == null){
-                    lector.close();
-                    throw new RuntimeException("Error en la línea " + numeroLinea + ": \"" + linea + "\" no es válida");
-                } else {
-                    instrucciones.add(instr);
-                }
+                String reg = partes[1];
+                if(!ConversorBinario.esRegistroValido(reg)) return null;
+                return new Instruccion(operacion, reg, null);
             }
 
-            lector.close();
-            return instrucciones;
-        }
-        
-        public static void main(String[] args){
+            case "LOAD":
+            case "STORE":
+            case "PUSH":
+            case "POP": {
+              
+                String reg = partes[1];
+                if(!ConversorBinario.esRegistroValido(reg)) return null;
+                return new Instruccion(operacion, reg, null);
+            }
 
+            case "MOV":
+            case "ADD":
+            case "SUB": {
+                // operación + registro + valor
+                String reg = partes[1];
+                if(!ConversorBinario.esRegistroValido(reg)) return null;
+                Integer valor = Integer.parseInt(partes[2]);
+                validarRango(valor);
+                return new Instruccion(operacion, reg, valor);
+            }
+
+            case "SWAP":
+            case "CMP": {
+                // operación + registro (para CMP AX, BX solo se usa el primero)
+                String reg = partes[1];
+                if(!ConversorBinario.esRegistroValido(reg)) return null;
+                return new Instruccion(operacion, reg, null);
+            }
+
+            case "JMP":
+            case "JE":
+            case "JNE": {
+                // operación + desplazamiento (puede ser +2, -3, etc.)
+                Integer desp = Integer.parseInt(partes[1]);
+                return new Instruccion(operacion, null, desp);
+            }
+
+            case "PARAM": {
+                // operación + valor (cada PARAM mete un solo valor a la pila)
+                Integer valor = Integer.parseInt(partes[1]);
+                validarRango(valor);
+                return new Instruccion(operacion, null, valor);
+            }
+
+            case "INT": {
+                // "INT 20H", "INT 10H", "INT 09H", "INT 21H"
+                String numero = partes[1].toUpperCase();
+                return new Instruccion(operacion, numero, null);
+            }
+
+            default:
+                return null;
         }
+    }
+
+    /**
+     * Valida que un valor esté entre -127 y 127 (8 bits con signo).
+     */
+    private static void validarRango(int valor){
+        if(valor < -127 || valor > 127){
+            throw new RuntimeException("El valor " + valor +
+                " no cabe en 8 bits. Debe ser entre -127 y 127.");
+        }
+    }
+
+    /**
+     * Lee un archivo .asm y devuelve la lista de instrucciones.
+     */
+    public static List<Instruccion> leerArchivo(File archivo) throws IOException {
+        List<Instruccion> instrucciones = new ArrayList<>();
+        BufferedReader lector = new BufferedReader(new FileReader(archivo));
+        String linea;
+        int numeroLinea = 0;
+
+        while((linea = lector.readLine()) != null){
+            numeroLinea = numeroLinea + 1;
+
+            if(linea.length() > 200){
+                lector.close();
+                throw new RuntimeException("El archivo no parece ser un .asm válido (línea "
+                    + numeroLinea + " es demasiado larga o contiene datos binarios)");
+            }
+
+            if(linea.trim().isEmpty()){
+                continue;
+            }
+
+            Instruccion instr = procesarLinea(linea);
+
+            if(instr == null){
+                lector.close();
+                throw new RuntimeException("Error en la línea " + numeroLinea
+                    + ": \"" + linea + "\" no es válida");
+            } else {
+                instrucciones.add(instr);
+            }
+        }
+
+        lector.close();
+        return instrucciones;
+    }
+
+    public static void main(String[] args) {
+        try {
+            File archivo = new File("programa1.asm");
+            List<Instruccion> instrucciones = ParserASM.leerArchivo(archivo);
+
+            System.out.println("Instrucciones leídas:");
+            for(Instruccion instr : instrucciones){
+                System.out.println("  " + instr.getTextoCompleto());
+            }
+        } catch (IOException e) {
+            System.out.println("Error leyendo archivo: " + e.getMessage());
+        }
+    }
 }

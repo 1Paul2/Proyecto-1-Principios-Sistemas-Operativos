@@ -1,127 +1,121 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package minipc.hardware;
 
-/**
- *
- * @author Poll Anthony Garro Vargas - 2024129001
- * @Universidad: Instituto Tecnológico de Costa Rica
- * 
- */
-
+import java.util.List;
+import java.util.ArrayList;
 
 public class Disco {
-    private static final int TAMANO_INDICE = 16;
 
-    private String[] datos;             // el disco: arreglo de posiciones de 8 bits, igual que Memoria
-    private int tamanoTotal;            // configurable, default 512
-    private int tamanoMemoriaVirtual;   // configurable, default 64
+    private String[] datos;
+    private int tamanoTotal;
+    private int tamanoIndice;
+    private int tamanoMemoriaVirtual;
 
-    private String[] nombresIndice;     // primeros TAMANO_INDICE registros: nombre del archivo (o null si vacío)
-    private int[] direccionesIndice;    // primeros TAMANO_INDICE registros: dirección donde inicia ese archivo
-    private int siguientePosicionLibre; // primera posición de datos disponible, después del índice
-
-    // E: tamanoTotal (int) - tamaño total del almacenamiento secundario;
-    //    tamanoMemoriaVirtual (int) - tamaño reservado como memoria virtual
-    // S: no aplica (constructor)
-    // R: tamanoTotal debe ser mayor que TAMANO_INDICE
-    public Disco(int tamanoTotal, int tamanoMemoriaVirtual){
-        if(tamanoTotal <= TAMANO_INDICE){
-            throw new RuntimeException("El almacenamiento secundario debe ser mayor que " + TAMANO_INDICE + " (espacio reservado para el índice).");
-        }
-
+    public Disco(int tamanoTotal) {
         this.tamanoTotal = tamanoTotal;
-        this.tamanoMemoriaVirtual = tamanoMemoriaVirtual;
-
         this.datos = new String[tamanoTotal];
         for(int i = 0; i < tamanoTotal; i++){
-            datos[i] = "00000000";
+            datos[i] = "";
         }
-
-        this.nombresIndice = new String[TAMANO_INDICE];
-        this.direccionesIndice = new int[TAMANO_INDICE];
-        for(int i = 0; i < TAMANO_INDICE; i++){
-            nombresIndice[i] = null;
-            direccionesIndice[i] = -1;
-        }
-
-        // el índice ocupa las primeras TAMANO_INDICE posiciones del disco
-        this.siguientePosicionLibre = TAMANO_INDICE;
+        this.tamanoIndice = 10;         
+        this.tamanoMemoriaVirtual = 64; 
     }
 
-    // E: nombre (String) - nombre del archivo a crear; tamano (int) - cuántas posiciones necesita
-    // S: int - la dirección donde quedó guardado el archivo
-    // R: lanza RuntimeException si el índice está lleno o si no hay espacio en el disco
-    public int crearArchivo(String nombre, int tamano){
-        if(buscarArchivo(nombre) != -1){
-            throw new RuntimeException("Ya existe un archivo con el nombre \"" + nombre + "\".");
+    public boolean guardarArchivo(String nombre, List<String> contenido){
+        if(existeArchivo(nombre)){
+            return false;
         }
 
-        int slot = buscarSlotLibreIndice();
-        if(slot == -1){
-            throw new RuntimeException("El índice de archivos está lleno (máximo " + TAMANO_INDICE + " archivos).");
-        }
-
-        if(siguientePosicionLibre + tamano > tamanoTotal){
-            throw new RuntimeException("No hay espacio suficiente en el almacenamiento secundario para el archivo \"" + nombre + "\".");
-        }
-
-        int direccion = siguientePosicionLibre;
-        nombresIndice[slot] = nombre;
-        direccionesIndice[slot] = direccion;
-        siguientePosicionLibre = siguientePosicionLibre + tamano;
-
-        return direccion;
-    }
-
-    // E: nombre (String) - nombre del archivo a buscar
-    // S: int - la dirección donde inicia ese archivo, o -1 si no existe
-    // R: ninguna
-    public int buscarArchivo(String nombre){
-        for(int i = 0; i < TAMANO_INDICE; i++){
-            if(nombre.equals(nombresIndice[i])){
-                return direccionesIndice[i];
+        int posicionIndice = -1;
+        for(int i = 0; i < tamanoIndice; i++){
+            if(datos[i].isEmpty()){
+                posicionIndice = i;
+                break;
             }
         }
-        return -1;
-    }
+        if(posicionIndice == -1){
+            return false;
+        }
+        int limiteArchivos = tamanoTotal - tamanoMemoriaVirtual;
+        int direccion = -1;
 
-    // E: nombre (String) - nombre del archivo a eliminar
-    // S: no aplica (void)
-    // R: lanza RuntimeException si el archivo no existe
-    public void eliminarArchivo(String nombre){
-        for(int i = 0; i < TAMANO_INDICE; i++){
-            if(nombre.equals(nombresIndice[i])){
-                nombresIndice[i] = null;
-                direccionesIndice[i] = -1;
-                return;
+        for(int i = tamanoIndice; i <= limiteArchivos - contenido.size(); i++){
+            boolean huecoLibre = true;
+            for(int j = 0; j < contenido.size(); j++){
+                if(!datos[i + j].isEmpty()){
+                    huecoLibre = false;
+                    break;
+                }
+            }
+            if(huecoLibre){
+                direccion = i;
+                break;
             }
         }
-        throw new RuntimeException("No existe un archivo con el nombre \"" + nombre + "\".");
-    }
-
-    // E: posicion (int) - dirección de disco a escribir; valorBinario (String) - dato a guardar
-    // S: no aplica (void)
-    // R: posicion debe estar entre 0 y tamanoTotal-1, y no debe caer dentro del área del índice
-    public void escribir(int posicion, String valorBinario){
-        if(posicion < TAMANO_INDICE){
-            throw new RuntimeException("La posición " + posicion + " pertenece al índice de archivos, no se puede escribir ahí directamente.");
+        if(direccion == -1){
+            return false;
         }
-        datos[posicion] = valorBinario;
-    }
+        datos[posicionIndice] = nombre + "," + direccion + "," + contenido.size();
 
-    // E: posicion (int) - dirección de disco a leer
-    // S: String - el valor binario guardado en esa posición
-    // R: posicion debe estar entre 0 y tamanoTotal-1
-    public String leer(int posicion){
-        return datos[posicion];
-    }
+        for(int i = 0; i < contenido.size(); i++){
+            datos[direccion + i] = contenido.get(i);
+        }
+        return true;
+    }  
 
-    private int buscarSlotLibreIndice(){
-        for(int i = 0; i < TAMANO_INDICE; i++){
-            if(nombresIndice[i] == null){
-                return i;
+    public List<String> leerArchivo(String nombre){
+        for(int i = 0; i < tamanoIndice; i++){
+            if(datos[i] != null && !datos[i].isEmpty()){
+                String[] partes = datos[i].split(",");
+                if(partes[0].equals(nombre)){
+                    int direccion = Integer.parseInt(partes[1]);
+                    int tamanio = Integer.parseInt(partes[2]);
+                    List<String> contenido = new ArrayList<>();
+                    for(int j = 0; j < tamanio; j++){
+                        contenido.add(datos[direccion + j]);
+                    }
+                    return contenido;
+                }
             }
         }
-        return -1;
+        return new ArrayList<>();
+    }
+
+    public boolean eliminarArchivo(String nombre){
+        for(int i = 0; i < tamanoIndice; i++){
+            if(datos[i] != null && !datos[i].isEmpty()){
+                String[] partes = datos[i].split(",");
+                if(partes[0].equals(nombre)){
+                    int direccion = Integer.parseInt(partes[1]);
+                    int tamanio = Integer.parseInt(partes[2]);
+                    for(int j = 0; j < tamanio; j++){
+                        datos[direccion + j] = "";
+                    }
+                    datos[i] = "";
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean existeArchivo(String nombre){
+        for(int i = 0; i < tamanoIndice; i++){
+            if(datos[i] != null && !datos[i].isEmpty()){
+                String[] partes = datos[i].split(",");
+                if(partes[0].equals(nombre)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public String[] getTodasLasPosiciones(){
+        return datos;
     }
 
     public int getTamanoTotal(){
@@ -131,16 +125,28 @@ public class Disco {
     public int getTamanoMemoriaVirtual(){
         return tamanoMemoriaVirtual;
     }
-
-    public String[] getNombresIndice(){
-        return nombresIndice;
-    }
-
-    public int[] getDireccionesIndice(){
-        return direccionesIndice;
-    }
-
-    public static void main(String[] args){
-
-    }
+    
+    public static void main(String[] args) {
+    Disco disco = new Disco(512);
+    
+    // Guardar archivo
+    List<String> contenido = new ArrayList<>();
+    contenido.add("MOV AX, 5");
+    contenido.add("MOV BX, 99");
+    contenido.add("INT 20H");
+    
+    boolean ok = disco.guardarArchivo("programa1.asm", contenido);
+    System.out.println("Guardado: " + ok);
+    System.out.println("Existe: " + disco.existeArchivo("programa1.asm"));
+    
+    // Leer archivo
+    List<String> leido = disco.leerArchivo("programa1.asm");
+    System.out.println("Leído: " + leido);
+    
+    // Eliminar
+    boolean borrado = disco.eliminarArchivo("programa1.asm");
+    System.out.println("Borrado: " + borrado);
+    System.out.println("Existe después: " + disco.existeArchivo("programa1.asm"));
 }
+}
+

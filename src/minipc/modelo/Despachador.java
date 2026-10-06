@@ -22,6 +22,7 @@ public class Despachador {
     public void despachar(BCP bcp) {
         cpu.setBcpActual(bcp);
         bcp.restaurarEstado(cpu);
+        cpu.reiniciarInstruccion(); 
         bcp.setEstado("Ejecución");
     }
     

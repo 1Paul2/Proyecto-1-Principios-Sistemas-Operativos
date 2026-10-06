@@ -5,103 +5,25 @@
 package minipc.util;
 
 /**
- *
- * @author Poll Anthony Garro Vargas - 2024129001
- * @Universidad: Instituto Tecnológico de Costa Rica
- * 
+ * ConversorBinario: utilidades para validar registros y convertir valores
+ * hexadecimales. Ya no se usa para convertir a binario porque el sistema
+ * ahora trabaja con texto plano en memoria.
  */
 public class ConversorBinario {
-    
-    // E: Type (String) - nombre del registro, como "AX", "BX", "CX", "DX"
-    // S: String - código binario de 4 bits del registro, o null si no es válido
-    // R: Type debe ser exactamente uno de los 4 registros existentes
-    public static String RegistroBinario(String Type){
-        String Dato = "";
-        if(Type.equals("AX")){
-            Dato = "0001";
-        }else if(Type.equals("BX")){
-            Dato = "0010";
-        }else if(Type.equals("CX")){
-            Dato = "0011";
-        }else if(Type.equals("DX")){
-            Dato = "0100";
-        }else{
-            Dato = null;
-            
-        }
-        return Dato;
-    }
-    
-    // E: n (int) - número entero a convertir, positivo o negativo
-    // S: String - representación binaria de 8 bits (1 bit de signo + 7 bits de valor)
-    // R: n debe estar en el rango -127 a 127 para que entre en 7 bits de magnitud
-    public static String NumeroBinario(int n){
-        String binario = "";
-        String Dato = "00000000";
-        if(n < 0){
-            StringBuilder sb = new StringBuilder(Dato);
-            sb.setCharAt(0,'1');
-            Dato = sb.toString();
-            n = n * -1;
-        }
-        
-        while (n > 0) {
-            binario = (n % 2) + binario;
-            n = n / 2;
-        }
-        StringBuilder sb = new StringBuilder(Dato);
-        sb.replace((8-(binario.length())),8, binario);
-        Dato = sb.toString();
-        return Dato;
-    }
-  
-    public static String BinarioAInt(String binario){
-        if(binario.equals("0001")) return "INT20";
-        if(binario.equals("0010")) return "INT10";
-        if(binario.equals("0011")) return "INT09";
-        if(binario.equals("0100")) return "INT21";
-        return null;
-    }
-    // E: binario (String) - cadena de 8 bits (1 bit de signo + 7 bits de valor)
-    // S: int - el valor entero representado, positivo o negativo
-    // R: binario debe tener exactamente 8 caracteres, solo '0' y '1'
-    public static int BinarioAEntero(String binario){
-        boolean esNegativo = true;
-        int num = 0;
-        if(binario.charAt(0) == '1'){
-            StringBuilder sb = new StringBuilder(binario);
-            sb.setCharAt(0,'0');
-            binario = sb.toString();
-            esNegativo = false;
-        }
-        num = Integer.parseInt(binario, 2);
-        if(!esNegativo){
-            num = (num * (-1));
-        }
-        return num;
-    }
-    
-    // E: binario (String) - código binario de 4 bits de un registro
-    // S: String - nombre del registro ("AX","BX","CX","DX"), o null si no es válido
-    // R: binario debe ser uno de los 4 códigos válidos definidos
-    public static String BinarioARegistro(String binario){
-        String Dato = "";
-        if(binario.equals("0001")){
-            Dato = "AX";
-        }else if(binario.equals("0010")){
-            Dato = "BX";
-        }else if(binario.equals("0011")){
-            Dato = "CX";
-        }else if(binario.equals("0100")){
-            Dato = "DX";
-        }else{
-            Dato = null;
-            
-        }
-        return Dato;
+
+    /**
+     * Valida si un texto es uno de los registros válidos (AX, BX, CX, DX).
+     */
+    public static boolean esRegistroValido(String reg){
+        if(reg == null) return false;
+        return reg.equals("AX") || reg.equals("BX")
+            || reg.equals("CX") || reg.equals("DX");
     }
 
-
+    /**
+     * Convierte un texto hexadecimal como "20H" o "1A" a entero.
+     * Usado por el parser ASM para interpretar valores como INT 20H.
+     */
     public static int HexAEntero(String texto){
         String limpio = texto.trim().toUpperCase();
         if(limpio.endsWith("H")){
@@ -109,8 +31,7 @@ public class ConversorBinario {
         }
         return Integer.parseInt(limpio, 16);
     }
-    
-    public static void main(String[] args){
 
+    public static void main(String[] args){
     }
 }

@@ -71,6 +71,9 @@ public class Planificador {
         listaFinalizados.encolar(bcp);
     }
         
- 
-    
+    public ColaTrabajo getListaTrabajos() { return listaTrabajos; }
+    public ColaTrabajo getListaProcesos() { return listaProcesos; }
+    public ColaTrabajo getListaEspera() { return listaEspera; }
+    public ColaTrabajo getListaFinalizados() { return listaFinalizados; }
+
 }
