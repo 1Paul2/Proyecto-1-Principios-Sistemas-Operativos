@@ -33,27 +33,61 @@ public class ParserASM {
     // S: Instruccion - la instrucción validada
     // R: lanza IllegalArgumentException con el motivo si la línea no es válida
     public static Instruccion procesarLinea(String linea){
-        // Un texto entre comillas (nombre de archivo) se respeta tal cual, sin pasarlo a mayúsculas
-        String literal = null;
+        // ---- Formato estricto: OPERACION op1, op2, op3 ----
+        // - La operación va separada de los operandos por espacio(s).
+        // - Los operandos se separan con UNA sola coma (los espacios alrededor son opcionales).
+        // - No se permiten comas al inicio o al final, comas repetidas ni operandos sin coma.
         String codigo = linea.trim();
-        int comilla = codigo.indexOf('"');
-        if (comilla >= 0) {
-            literal = codigo.substring(comilla).trim();
-            codigo = codigo.substring(0, comilla);
-            if (!literal.matches("\"[A-Za-z0-9_.\\-]+\"")) {
-                throw new IllegalArgumentException("el texto " + literal
-                    + " no es válido (use comillas y solo letras, números, punto, guion o guion bajo, sin espacios)");
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("^(\\S+)(?:\\s+(.*))?$").matcher(codigo);
+        if (!m.matches()) {
+            throw new IllegalArgumentException("línea vacía o mal formada");
+        }
+        String operacion = m.group(1);
+        String resto = m.group(2) == null ? "" : m.group(2).trim();
+
+        if (operacion.contains(",")) {
+            throw new IllegalArgumentException("coma mal ubicada después de la operación \"" + operacion
+                + "\" (la operación se separa de los operandos con un espacio)");
+        }
+        operacion = operacion.toUpperCase();
+        if (!TipoOperacion.esOperacionValida(operacion)) {
+            throw new IllegalArgumentException("la operación \"" + operacion + "\" no existe");
+        }
+
+        String[] ops;
+        if (resto.isEmpty()) {
+            ops = new String[0];
+        } else {
+            if (resto.startsWith(",")) {
+                throw new IllegalArgumentException("coma de más al inicio de los operandos");
             }
-        }
-        String[] partes = codigo.trim().toUpperCase().split("[,\\s]+");
-        if (literal != null) {
-            partes = Arrays.copyOf(partes, partes.length + 1);
-            partes[partes.length - 1] = literal;
-        }
-        String operacion = partes[0];
-        String[] ops = Arrays.copyOfRange(partes, 1, partes.length);
-        if (literal != null && !"MOV".equals(operacion)) {
-            throw new IllegalArgumentException("solo MOV DX acepta un texto entre comillas");
+            if (resto.endsWith(",")) {
+                throw new IllegalArgumentException("coma de más al final de la línea");
+            }
+            ops = resto.split(",", -1);
+            for (int i = 0; i < ops.length; i++) {
+                String op = ops[i].trim();
+                if (op.isEmpty()) {
+                    throw new IllegalArgumentException("comas repetidas (hay un operando vacío entre comas)");
+                }
+                if (op.matches(".*\\s.*")) {
+                    throw new IllegalArgumentException("falta una coma entre los operandos \"" + op
+                        + "\" (los operandos se separan con una coma, por ejemplo: MOV AX, 5)");
+                }
+                if (op.startsWith("\"")) {
+                    // Texto entre comillas (nombre de archivo): se respeta tal cual, sin mayúsculas
+                    if (!op.matches("\"[A-Za-z0-9_.\\-]+\"")) {
+                        throw new IllegalArgumentException("el texto " + op
+                            + " no es válido (use comillas y solo letras, números, punto, guion o guion bajo, sin espacios)");
+                    }
+                    if (!"MOV".equals(operacion)) {
+                        throw new IllegalArgumentException("solo MOV DX acepta un texto entre comillas");
+                    }
+                    ops[i] = op;
+                } else {
+                    ops[i] = op.toUpperCase();
+                }
+            }
         }
 
         if(!TipoOperacion.esOperacionValida(operacion)){
