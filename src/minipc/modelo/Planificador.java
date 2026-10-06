@@ -155,7 +155,7 @@ public class Planificador {
 
             b.setDesplazamientoPC(b.getPcGuardado() - b.getDireccionBase());
             liberarMemoria(b);
-            b.setEstado("Suspendido");
+            b.setEstado(BCP.SUSPENDIDO_ESPERA);      
             mensajes.add("[SO] P" + b.getIdProceso() + " suspendido: sale de memoria mientras espera el teclado,"
                 + " para dar espacio a P" + necesita.getIdProceso());
             return true;
@@ -187,7 +187,7 @@ public class Planificador {
     public int procesosEnMemoria(int enEjecucion){
         int enEspera = 0;
         for (BCP b = listaEspera.getPrimero(); b != null; b = b.getSiguiente()) {
-            if (!"Suspendido".equals(b.getEstado())) enEspera++;
+            if (!b.getEstado().startsWith("Suspendido")) enEspera++;
         }
         return listaProcesos.tamanio() + enEspera + enEjecucion;
     }
@@ -220,7 +220,9 @@ public class Planificador {
     public BCP salirDeEspera(){
         BCP bcp = listaEspera.desencolar();
         if (bcp == null) return null;
-        if ("Suspendido".equals(bcp.getEstado())) {
+        if (bcp.getEstado().startsWith("Suspendido")) {
+            // Ya ocurrió su evento, pero sigue fuera de memoria
+            bcp.setEstado(BCP.SUSPENDIDO_PREPARADO);
             // No está en memoria: vuelve a la lista de trabajos para recargarse cuando haya espacio
             listaTrabajos.encolar(bcp);
         } else {

@@ -45,7 +45,7 @@ memoria, el disco, los BCP y la lista de trabajos.
 - Carga de uno o varios archivos `.asm` a la vez, con validación de sintaxis y mensajes claros (archivo, línea y motivo).
 - Los programas se guardan en disco, con un **índice** (nombre, dirección y tamaño) en los primeros registros.
 - Creación de un **BCP** por proceso con todos los campos del enunciado: estado, PC, registros (AC, AX, BX, CX, DX, IR), pila de 5 con control de desbordamiento, CPU, tiempo de inicio, tiempo empleado, archivos abiertos, enlace al siguiente BCP, base, alcance y prioridad.
-- Estados de proceso: **Nuevo, Preparado, Ejecución, En espera, Suspendido y Finalizado**.
+- **Modelo de 7 estados** (Stallings, cap. 3): **Nuevo, Preparado, Ejecución, En espera, Suspendido en espera, Suspendido preparado y Finalizado**.
 - Los BCP se guardan en la **zona del S.O. de la memoria principal**, cada uno con la dirección de memoria del siguiente BCP.
 - **Lista de trabajos**, **planificador de trabajos** y **lista de procesos**.
 - 1 CPU que administra **hasta 5 procesos** en memoria; si no hay espacio, el proceso espera hasta que se libere.
@@ -67,7 +67,7 @@ memoria, el disco, los BCP y la lista de trabajos.
 
 ### Decisiones de diseño a tomar en cuenta
 
-- El enunciado menciona "7 estados" pero solo enumera 6; se implementaron esos 6.
+- El enunciado menciona "7 estados": se siguió el modelo de 7 estados del libro de Stallings, donde *Suspendido* se divide en **Suspendido en espera** (bloqueado y fuera de memoria) y **Suspendido preparado** (ya ocurrió su evento pero sigue fuera de memoria).
 - El "peso" de `INT 09H` se tomó como 1 segundo; luego el proceso queda **En espera** hasta que el usuario ingrese el valor.
 - Los procesos después del 5.º **esperan** en la lista de trabajos (no van a memoria virtual); la memoria virtual se usa cuando un programa no cabe completo en la RAM.
 
@@ -273,9 +273,10 @@ Validación de los `.asm` y lectura/escritura de `config.txt`.
 ## Estado Suspendido
 
 Si un proceso está **En espera** del teclado y otro proceso no puede entrar a
-memoria, el S.O. **suspende** al que espera: lo saca de memoria (su programa
-sigue en disco) y libera su espacio. Al recibir su valor, vuelve a la lista de
-trabajos y se recarga cuando haya espacio, continuando desde donde iba.
+memoria, el S.O. **suspende** al que espera (**Suspendido en espera**): lo saca de
+memoria (su programa sigue en disco) y libera su espacio. Al recibir su valor pasa
+a **Suspendido preparado**, vuelve a la lista de trabajos y se recarga cuando haya
+espacio, continuando desde donde iba (con su PC reubicado a la nueva base).
 
 ---
 

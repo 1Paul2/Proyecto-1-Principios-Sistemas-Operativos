@@ -21,6 +21,11 @@ import java.util.ArrayList;
  * de la CPU capturados al momento de invocar capturaEstado().
  */
 public class BCP {
+    // Modelo de 7 estados (Stallings, cap. 3): Nuevo, Preparado, Ejecución, En espera,
+    // Suspendido en espera (bloqueado y fuera de memoria), Suspendido preparado
+    // (ya ocurrió su evento pero sigue fuera de memoria) y Finalizado.
+    public static final String SUSPENDIDO_ESPERA = "Suspendido en espera";
+    public static final String SUSPENDIDO_PREPARADO = "Suspendido preparado";
     private int idProceso;
     private String estado;
     private int pcGuardado;

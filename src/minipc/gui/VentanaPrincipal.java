@@ -243,7 +243,7 @@ public class VentanaPrincipal extends JFrame {
         return d;
     }
 
-    //                                CUERPO
+    //CUERPO
  
 
     private JPanel crearCuerpo(){
@@ -336,7 +336,7 @@ public class VentanaPrincipal extends JFrame {
     private JPanel crearLeyendaEstados(){
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 6));
         p.setOpaque(false);
-        for (String e : new String[]{"Nuevo", "Preparado", "Ejecución", "En espera", "Suspendido", "Finalizado"}) {
+        for (String e : new String[]{"Nuevo", "Preparado", "Ejecución", "En espera", "Suspendido en espera", "Suspendido preparado", "Finalizado"}) {
             Distintivo d = new Distintivo();
             d.setEstado(e);
             p.add(d);
@@ -1433,7 +1433,8 @@ public class VentanaPrincipal extends JFrame {
                 case "Preparado":return new Color[]{AZUL, AZUL_CLARO};
                 case "Ejecución":return new Color[]{VERDE_OSCURO, VERDE_CLARO};
                 case "En espera":return new Color[]{AMBAR, AMBAR_CLARO};
-                case "Suspendido":return new Color[]{MORADO, MORADO_CLARO};
+                case "Suspendido en espera": return new Color[]{MORADO, MORADO_CLARO};
+                case "Suspendido preparado": return new Color[]{new Color(0x9333EA), new Color(0xF3E8FF)};
                 case "Finalizado":return new Color[]{new Color(0x475569), new Color(0xE2E8F0)};
                 default:return new Color[]{GRIS, GRIS_CLARO};
             }
