@@ -309,24 +309,52 @@ public class BCP {
         }
 
         // ---- Memoria virtual ----
-        public int getEnRAM(){ return enRAM; }
-        public void setEnRAM(int n){ this.enRAM = n; }
-        public int getBaseVirtual(){ return baseVirtual; }
-        public void setBaseVirtual(int dir){ this.baseVirtual = dir; }
-        public boolean isAvisoVirtual(){ return avisoVirtual; }
-        public void setAvisoVirtual(boolean a){ this.avisoVirtual = a; }
+        public int getEnRAM(){
+            return enRAM; 
+        }
+        public void setEnRAM(int n){
+            this.enRAM = n; 
+        }
+        public int getBaseVirtual(){
+            return baseVirtual; 
+        }
+        public void setBaseVirtual(int dir){
+            this.baseVirtual = dir; 
+        }
+        public boolean isAvisoVirtual(){
+            return avisoVirtual; 
+        }
+        public void setAvisoVirtual(boolean a){
+            this.avisoVirtual = a; 
+        }
 
         // Instrucciones que no cupieron en RAM y están en la memoria virtual del disco
-        public int getEnVirtual(){ return tamanioProceso - enRAM; }
-        public boolean usaMemoriaVirtual(){ return baseVirtual >= 0 && getEnVirtual() > 0; }
+        public int getEnVirtual(){
+            return tamanioProceso - enRAM; 
+        }
+        public boolean usaMemoriaVirtual(){
+            return baseVirtual >= 0 && getEnVirtual() > 0; 
+        }
 
         // ---- INT 21H y suspensión ----
-        public int getAhGuardado(){ return ahGuardado; }
-        public int getAlGuardado(){ return alGuardado; }
-        public String getDxTextoGuardado(){ return dxTextoGuardado; }
-        public void setDxTextoGuardado(String t){ this.dxTextoGuardado = t; }
-        public int getDesplazamientoPC(){ return desplazamientoPC; }
-        public void setDesplazamientoPC(int d){ this.desplazamientoPC = d; }
+        public int getAhGuardado(){
+            return ahGuardado; 
+        }
+        public int getAlGuardado(){
+            return alGuardado;
+        }
+        public String getDxTextoGuardado(){
+            return dxTextoGuardado; 
+        }
+        public void setDxTextoGuardado(String t){
+            this.dxTextoGuardado = t; 
+        }
+        public int getDesplazamientoPC(){
+            return desplazamientoPC; 
+        }
+        public void setDesplazamientoPC(int d){ 
+            this.desplazamientoPC = d; 
+        }
 
         // E: archivo (String) - nombre del archivo
         // S: boolean - true si el proceso tiene ese archivo abierto
