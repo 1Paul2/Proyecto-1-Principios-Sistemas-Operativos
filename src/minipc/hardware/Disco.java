@@ -18,8 +18,8 @@ public class Disco {
         this(tamanoTotal, 64);
     }
 
-    // E: tamanoTotal (int) - posiciones del disco; tamanoMemoriaVirtual (int) - posiciones reservadas al final
-    // S: no aplica (constructor)
+    // E: tamanoTotal - posiciones del disco; tamanoMemoriaVirtual - posiciones reservadas al final
+    // S: no aplica 
     // R: tamanoTotal debe ser mayor que índice + memoria virtual
     public Disco(int tamanoTotal, int tamanoMemoriaVirtual) {
         this.tamanoTotal = tamanoTotal;
