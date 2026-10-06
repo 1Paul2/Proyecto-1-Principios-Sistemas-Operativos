@@ -176,7 +176,7 @@ public class GestorProcesos {
         }
         bcp.setDxGuardado(valor);           // INT 09H guarda el valor en DX
         bcp.setDxTextoGuardado(null);
-        planificador.salirDeEspera();       // vuelve a preparados (o a la lista de trabajos si estaba suspendido)
+        planificador.salirDeEspera();       // vuelve a preparados o a la lista de trabajos si estaba suspendido
         cpu.imprimir(String.valueOf(valor));
 
         planificador.prepararSiguientes(enEjecucion());
@@ -305,4 +305,4 @@ public class GestorProcesos {
     public Disco getDisco() { return disco; }
     public Planificador getPlanificador() { return planificador; }
     public Despachador getDespachador() { return despachador; }
-}
+}

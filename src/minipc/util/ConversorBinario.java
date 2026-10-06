@@ -16,9 +16,12 @@ public class ConversorBinario {
      */
     public static boolean esRegistroValido(String reg){
         if(reg == null) return false;
-        return reg.equals("AX") || reg.equals("BX")
-            || reg.equals("CX") || reg.equals("DX")
-            || reg.equals("AH") || reg.equals("AL");     // AH y AL se usan con INT 21H
+        return reg.equals("AX") 
+            || reg.equals("BX")
+            || reg.equals("CX") 
+            || reg.equals("DX")
+            || reg.equals("AH") 
+            || reg.equals("AL");    
     }
 
     /**
@@ -35,4 +38,4 @@ public class ConversorBinario {
 
     public static void main(String[] args){
     }
-}
+}

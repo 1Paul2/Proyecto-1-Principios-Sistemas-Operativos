@@ -209,26 +209,4 @@ public class Disco {
         return tamanoMemoriaVirtual;
     }
     
-    public static void main(String[] args) {
-    Disco disco = new Disco(512);
-    
-    // Guardar archivo
-    List<String> contenido = new ArrayList<>();
-    contenido.add("MOV AX, 5");
-    contenido.add("MOV BX, 99");
-    contenido.add("INT 20H");
-    
-    boolean ok = disco.guardarArchivo("programa1.asm", contenido);
-    System.out.println("Guardado: " + ok);
-    System.out.println("Existe: " + disco.existeArchivo("programa1.asm"));
-    
-    // Leer archivo
-    List<String> leido = disco.leerArchivo("programa1.asm");
-    System.out.println("Leído: " + leido);
-    
-    // Eliminar
-    boolean borrado = disco.eliminarArchivo("programa1.asm");
-    System.out.println("Borrado: " + borrado);
-    System.out.println("Existe después: " + disco.existeArchivo("programa1.asm"));
 }
-}

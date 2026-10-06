@@ -29,7 +29,7 @@ public class Planificador {
     // Colas
     private ColaTrabajo listaTrabajos;     // Nuevo: en disco, sin memoria
     private ColaTrabajo listaProcesos;     // Preparado: en memoria, esperando CPU
-    private ColaTrabajo listaEspera;       // En espera: bloqueado por E/S (teclado)
+    private ColaTrabajo listaEspera;       // En espera: bloqueado por E/S 
     private ColaTrabajo listaFinalizados;  // Finalizado
 
     private Memoria memoria;
@@ -241,8 +241,16 @@ public class Planificador {
         listaFinalizados.encolar(bcp);
     }
 
-    public ColaTrabajo getListaTrabajos() { return listaTrabajos; }
-    public ColaTrabajo getListaProcesos() { return listaProcesos; }
-    public ColaTrabajo getListaEspera() { return listaEspera; }
-    public ColaTrabajo getListaFinalizados() { return listaFinalizados; }
-}
+    public ColaTrabajo getListaTrabajos() {
+        return listaTrabajos; 
+    }
+    public ColaTrabajo getListaProcesos() {
+        return listaProcesos; 
+    }
+    public ColaTrabajo getListaEspera() {
+        return listaEspera; 
+    }
+    public ColaTrabajo getListaFinalizados() {
+        return listaFinalizados; 
+    }
+}

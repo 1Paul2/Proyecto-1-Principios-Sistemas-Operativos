@@ -25,7 +25,7 @@ import java.util.Properties;
  *
  * Formato de config.txt:
  *   memoriaPrincipal=256
- *   memoriaSistema=64   (25% de la memoria principal)
+ *   memoriaSistema=64   25% de la memoria principal
  *   almacenamientoSecundario=512
  *   memoriaVirtual=64
  */
@@ -114,10 +114,18 @@ public class ConfiguracionSistema {
         }
     }
 
-    public int getMemoriaPrincipal(){ return memoriaPrincipal; }
-    public int getMemoriaSistema(){ return memoriaSistema; }
-    public int getAlmacenamientoSecundario(){ return almacenamientoSecundario; }
-    public int getMemoriaVirtual(){ return memoriaVirtual; }
+    public int getMemoriaPrincipal(){
+        return memoriaPrincipal; 
+    }
+    public int getMemoriaSistema(){
+        return memoriaSistema;
+    }
+    public int getAlmacenamientoSecundario(){
+        return almacenamientoSecundario; 
+    }
+    public int getMemoriaVirtual(){
+        return memoriaVirtual;
+    }
 
     // E: los cuatro tamaños
     // S: no aplica (void)
@@ -125,7 +133,6 @@ public class ConfiguracionSistema {
     // E: no aplica
     // S: no aplica (void)
     // R: vuelve a los valores predeterminados y los guarda en config.txt
-    //    (se llama al cerrar el programa para que la próxima vez arranque con ellos)
     public void restaurarPredeterminados(){
         memoriaPrincipal = MEMORIA_PRINCIPAL_DEF;
         memoriaSistema = MEMORIA_SISTEMA_DEF;
@@ -145,4 +152,4 @@ public class ConfiguracionSistema {
         almacenamientoSecundario = as;
         memoriaVirtual = mv;
     }
-}
+}
