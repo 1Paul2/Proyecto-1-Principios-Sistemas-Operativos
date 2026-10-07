@@ -9,7 +9,7 @@
 Todos los requisitos del enunciado están implementados (ver [Objetivos alcanzados](#objetivos-alcanzados)).
 
 # Enlace del video:
-(https://1drv.ms/v/c/ce25781b8d4821df/IQAJJiWGZsSrTrmrLSiwhzX4AasCNh9x2B_luPxHaQjzW6c?e=bhdPnc)
+https://1drv.ms/v/c/ce25781b8d4821df/IQAJJiWGZsSrTrmrLSiwhzX4AasCNh9x2B_luPxHaQjzW6c?e=bhdPnc
 
 ---
 
